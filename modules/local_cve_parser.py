@@ -94,7 +94,7 @@ class LocalCveParser:
         """
         return df[df.description.str.contains(search_query)]
 
-    def run(self, target_cve_list):
+    def run(self, service_list):
         """"
         Runs the local CVE parser.
         :param: ip, speed.
@@ -102,28 +102,27 @@ class LocalCveParser:
         """
         self.check_last_update()
         df = self.parse_cev()
-        search_list = []
-        for service in target_cve_list:
-            word_list = target_cve_list[service]['product'].split(" ")
+        cve_list = []
+        for service in service_list:
+            word_list = service_list[service]['product'].split(" ")
 
             # Check that the product field is not empty.
             if len(word_list) != 0:
                 # Include the product into the search list based on certain requirements.
                 if len(word_list) > 1:
                     search_query = " ".join(word_list[:2])
-                    search_list.append(search_query)
                 else:
                     search_query = word_list[0]
-                    search_list.append(search_query)
 
                 # Include the version into the search list is it exist.
-                version = target_cve_list[service]['version']
+                version = service_list[service]['version']
                 if version != "":
                     search_query = "%s %s" % (search_query, version)
-                    search_list.append(search_query)
-                    final_query = "|".join(search_list)
-                print(self.search_cve(df, final_query))
 
+                # Check against the .csv file if a CVE exist
+                result = self.search_cve(df, search_query)
 
-# Store the results into a list and return
-
+                # Store the results into a list and return the list of CVEs.
+                for row in result.itertuples():
+                    cve_list.append(row.name)
+                return cve_list

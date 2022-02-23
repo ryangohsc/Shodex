@@ -33,7 +33,7 @@ class Nmap:
 
         # Prints the technical details of each port.
         keys = results['scan'].keys()
-        # print(results['scan']) // Keep this for debugging purposes
+        # print(results['scan']) # Keep this for debugging purposes
         count = 1
         for ip in keys:
             print("Target %s" % count)
