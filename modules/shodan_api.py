@@ -15,13 +15,12 @@ class ShodanAPI:
     def check_api_info(self):
         print("[!] API Key Successfully Loaded!")
         print("[!] Only the first 100 results of the Shodan Cralwer will be displayed as this is an Edu Account!")
-        os.system("curl -X GET https://api.shodan.io/tools/myip?key=%s" % self.api_key)
-        print(" is Your Public IP Addreess!")
+        # os.system("curl -X GET https://api.shodan.io/tools/myip?key=%s" % self.api_key)
+        # print(" is Your Public IP Addreess!")
         time.sleep(5)
 
     def scan_filter(self):
-        os.system("cls")
-        print("[!] Running search!")
+        print("[!] Running search query!")
         results = self.api.search(self.filter)
         results_list = []
         for result in results['matches']:
@@ -40,6 +39,7 @@ class ShodanAPI:
             results_list.append(sub_results_list)
         try:
             data_frame = pd.DataFrame(np.array(results_list, dtype=object), columns=['hostnames', 'ip', 'domains', 'os', 'city', 'region_code', 'area_code', 'longitude', 'postal_code', 'country_code', 'country_name'],)
+            os.system("clear")
             print(data_frame.to_string())
             target = input("[!] Select a target (e.g. 5): ")
             self.target = data_frame.iloc[[target]]
@@ -49,26 +49,34 @@ class ShodanAPI:
             print("[!] No results found!")
             return False
 
-    def scan_specified_ip(self):
-        os.system("cls")
-        print("[!] Running a scan on the selected target!")
-        port_list = []
+    def retrieve_info(self):
+        os.system("clear")
+        print("[!] Retrieving info on the selected target!")
         cve_list = []
 
         # Store data into variables
         target = self.target['ip']
         host = self.api.host(target)
         port_list = [str(item['port']) for item in host['data']]
-        cve_list = host['vulns']
+        try:
+            cve_list = host['vulns']
+        except KeyError:
+            pass
 
         # Print the information
-        print("Target Information")
-        print("IP: %s\n" % host['ip_str'])
-        print("Ports: %s\n" % ', '.join(port_list))
-        print("Vulns: %s\n" % ', '.join(cve_list))
-        print(cve_list)
+        print("\n\tTarget Information")
+        print("\tLast update: %s" % host['last_update'])
+        print("\tIP: %s" % host['ip_str'])
+        print("\tCity: %s" % host['city'])
+        print("\tCountry: %s" % host['country_name'])
+        print("\tOS: %s" % host['os'])
+        print("\tDomains: %s" % host['domains'])
+        print("\tHostnames: %s" % host['hostnames'])
+        print("\tISP: %s" % host['isp'])
+        print("\tOrg: %s" % host['org'])
+        print("\tPorts: %s\n" % ', '.join(port_list))
+        return host['ip_str'], cve_list, port_list
 
-        with open("test.txt", "w", encoding="utf-8") as a_file:
-            a_file.write(str(host['data']))
-
-
+    def on_demand_scan(self, target):
+        command = "shodan scan submit %s" % target
+        os.system(command)
