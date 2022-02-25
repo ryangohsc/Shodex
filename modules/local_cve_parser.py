@@ -47,10 +47,20 @@ class LocalCveParser:
             last_update_file = open(self.last_update_file_path, "r")
             last_update = last_update_file.read()
             print("[!] Last update was on %s" % last_update)
-            update = input("[+] Do you wish to update the CVE database? (y/n): ")
-            if update == "y":
-                print("[*] Updating CVE database...")
-                self.download_csv_file()
+            valid = False
+
+            # Check that the user input is valid. 
+            while valid is not True:
+                update = input("[*] Do you wish to update the CVE database? (y/n): ")
+                if update == "y" or update == "Y":
+                    valid = True
+                    print("[+] Updating CVE database...")
+                    self.download_csv_file()
+                elif update == "n" or update == "N":
+                    valid = True
+                    pass 
+                else:
+                    print("[!] Error! Invalid input entered!")
 
     def download_csv_file(self):
         """"
@@ -58,7 +68,7 @@ class LocalCveParser:
         :param:
         :return:
         """
-        print("[*] Downloading CVE database...")
+        print("[+] Downloading CVE database...")
         output_path = os.path.join(self.data_folder_path, OUTPUT_FILE)
         download_url = "curl -s http://%s --output %s" % (CVE_URL, output_path)
         os.system(download_url)
@@ -103,11 +113,7 @@ class LocalCveParser:
         df = self.parse_cev()
         cve_list = []
         for service in service_list:
-<<<<<<< HEAD
             word_list = service_list['product'].split(" ")
-=======
-            word_list = service_list[service]['product'].split(" ")
->>>>>>> 4aea341f408aeab2298509fddfbdab6d5b4fe054
 
             # Check that the product field is not empty.
             if len(word_list) != 0:
@@ -118,7 +124,6 @@ class LocalCveParser:
                     search_query = word_list[0]
 
                 # Include the version into the search list is it exist.
-<<<<<<< HEAD
                 version = service_list['version']
                 if version != "":
                     search_query = "%s %s" % (search_query, version)
@@ -130,16 +135,4 @@ class LocalCveParser:
                     # Store the results into a list and return the list of CVEs.
                     for row in result.itertuples():
                         cve_list.append((row.name, row.description))
-=======
-                version = service_list[service]['version']
-                if version != "":
-                    search_query = "%s %s" % (search_query, version)
-
-                # Check against the .csv file if a CVE exist
-                result = self.search_cve(df, search_query)
-
-                # Store the results into a list and return the list of CVEs.
-                for row in result.itertuples():
-                    cve_list.append(row.name)
->>>>>>> 4aea341f408aeab2298509fddfbdab6d5b4fe054
                 return cve_list
