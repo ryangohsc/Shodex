@@ -3,6 +3,7 @@ import cowsay
 from modules.shodan_api import *
 from modules.nmap import *
 from modules.local_cve_parser import *
+import modules.exploit_db
 
 # SHODAN_API_KEY = "OooeRjrCHdbDI98zZV8VQqhoTT6WCqoc"
 # backup key: gSQ3nesmWGafxG3xX8U3mP6YE8dcaJeK
@@ -73,6 +74,7 @@ def main():
             cve_parser = LocalCveParser()
             cve_list = cve_parser.run(service_list)
             # Feed the cve_list to the exploit crawler here.
+            modules.exploit_db.run(cve_list)
 
 
 if __name__ == '__main__':
