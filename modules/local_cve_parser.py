@@ -52,11 +52,11 @@ class LocalCveParser:
             # Check that the user input is valid. 
             while valid is not True:
                 update = input("[*] Do you wish to update the CVE database? (y/n): ")
-                if update == "y" or update == "Y":
+                if update.lower() == "y":
                     valid = True
                     print("[+] Updating CVE database...")
                     self.download_csv_file()
-                elif update == "n" or update == "N":
+                elif update.lower() == "n":
                     valid = True
                     pass 
                 else:

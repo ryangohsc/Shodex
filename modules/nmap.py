@@ -20,13 +20,16 @@ class Nmap:
         nmScan = nmap.PortScanner()
         cve_info = {}
         if speed == "through":
-            port_range = "0-65535"
+            # port_range = "0-65535"
+            port_range = "0-100"
         else:
             if port_list:
                 end = port_list[-1]
-                port_range = "%s-%s" % (0, end)
+                port_range = "0-100"
+                # port_range = "%s-%s" % (0, end)
             else:
-                port_range = "0-10000"
+                # port_range = "0-10000"
+                port_range = "0-100"
         results = nmScan.scan(ip, port_range)
 
         # Prints the summary details.

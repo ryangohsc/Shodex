@@ -4,6 +4,7 @@ import modules.exploit_db
 from modules.shodan_api import *
 from modules.nmap import *
 from modules.local_cve_parser import *
+from modules.exploit_loader import * 
 
 # SHODAN_API_KEY = "OooeRjrCHdbDI98zZV8VQqhoTT6WCqoc"
 # backup key: gSQ3nesmWGafxG3xX8U3mP6YE8dcaJeK
@@ -94,7 +95,7 @@ def offline_mode(speed, target, port_list):
     :return: None.
     """
     # Initiate a nmap scan. 
-    print("[!] Initiating an offline scan!")
+    print("[*] Initiating an offline nmap scan!")
     nmap = Nmap()
     if speed is None:
         speed = "quick"
@@ -121,42 +122,82 @@ def offline_mode(speed, target, port_list):
                     lst.append([item['port'], item2[0], item2[1]])
 
         # Store and clean the data.
-        recommended_empty = True
         try:
             df = pd.DataFrame(np.array(lst, dtype=object), columns=['port', 'name', 'desc'])
             print("\nPotential Vulnerable CVEs")
             print(df.to_string(justify="left", col_space=10))
-            recommended_empty = False
+
+            # Ask the user if they want to use the recommended exloit.
+            recommended_cve = use_recommended_cve(df)
+
+            # Ask the user if they want to use a local exploit.
+            if not recommended_cve:
+                use_local_exploit()
+
         except ValueError:
-            print("[!] No recommended CVES!")
+            print("[!] No recommended CVEs!")
+            use_local_exploit()
 
-        # Ask the user if they want to use the recommended exloit.
-        valid = False
-        if recommended_empty is False:
-            while valid is not True:
-                if recommended_empty is False:
-                    choice = input("\n[+] Do you wish to use a recommended CVE (y/n): ")
-                    # If the user wants to use a recommended CVE. 
-                    if choice == "y" or choice == "Y":
-                        row_choice = input("Enter row no: ")
-                        if int(row_choice) not in range(len(df)):
-                            print("[!] Error! Invalid input entered!")
-                        else:
-                            valid = True 
-                            search_list = df.iloc[[row_choice]].name.to_string().split(" ")[4]
-                            modules.exploit_db.run(search_list)
-                            
-                    # If the user does not want to use a recommended CVE.
-                    elif choice == "n" or choice == "N":
-                        valid = True  
 
-                    # If the user enters an invalid input. 
-                    else:
+def use_recommended_cve(df):
+    print('hi')
+    valid = False
+    if recommended_empty is False:
+        while valid is not True:
+            if recommended_empty is False:
+                choice = input("\n[+] Do you wish to use a recommended CVE (y/n): ")
+                if choice.lower() == "y":
+                    row_choice = input("\t[+] Enter row no: ")
+                    if int(row_choice) not in range(len(df)):
                         print("[!] Error! Invalid input entered!")
+                    else: 
+                        search_list = df.iloc[[row_choice]].name.to_string().split(" ")[4]
+                        found, exploit_file_path = modules.exploit_db.run([search_list])
+                        print(found)
+                        print(exploit_file_path)
+                        if found is True:
+                            return found
+                elif choice.lower() == "n":
+                    valid = True 
+                    return False
+                else:
+                    print("[!] Error! Invalid input entered!")
 
-        # Ask the user if they want to use a local exploit. 
-        valid = False 
 
+def use_local_exploit():
+    valid = False 
+    while valid is not True:
+        choice = input("\n[*] Do you wish to use a local exploit (y/n): ")
+        if choice.lower() == "y":
+            exploit_name = input("\t[+] Enter the exploit name: ")
+            parent_dir = os.getcwd()
+            exploit_path = os.path.join(parent_dir, "data", "local_exploits")
+            # avail_exploits = [(i.split(".")[0] for i in os.listdir(exploit_path)]
+            avail_exploits = [i for i in os.listdir(exploit_path)]
+
+            # Check if the exploits exists within local exploits dir. 
+            found = False
+            for exploit in avail_exploits:
+                if exploit_name == exploit.split(".")[0]:
+                    found = True
+                    exploit_name = exploit
+                
+            if found == False:
+                print("[!] Error! Exploit not found!")
+            else:
+                valid = True 
+                extension = exploit_name.split(".")[1]
+                name = os.path.join(parent_dir, "data", "local_exploits", exploit_name)
+                exploit_loader = ExploitLoader(name, extension)
+                exploit_loader.run()
+
+                
+                # Arm the exploit here. 
+
+        elif choice.lower() == "n":
+            valid = True 
+        else:
+            print("[!] Error! Invalid input entered!")
 
 
 if __name__ == '__main__':

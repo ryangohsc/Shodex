@@ -83,7 +83,7 @@ class ShodanAPI:
         :return: None.
         """     
         os.system("clear")
-        print("[+] Retrieving info on the selected target!")
+        print("[*] Retrieving info on the selected target!")
         cve_list = []
 
         # Store data into variables
