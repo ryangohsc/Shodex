@@ -28,7 +28,7 @@ class LocalCveParser:
         :param:
         :return:
         """
-        parent_dir = os.path.dirname(os.getcwd())
+        parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
         self.data_folder_path = os.path.join(parent_dir, "data")
         self.last_update_file_path = os.path.join(self.data_folder_path, 'last_update.txt')
 
@@ -39,6 +39,7 @@ class LocalCveParser:
 
         # Check if the "cve.csv" exists within the "data" folder.
         cve_file = os.path.join(parent_dir, "data", "allitems.csv")
+        print(cve_file)
         if path.exists(cve_file) is False:
             self.download_csv_file()
 
@@ -71,6 +72,8 @@ class LocalCveParser:
         :param:
         :return:
         """
+        parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+        self.data_folder_path = os.path.join(parent_dir, "data")
         self.cve_database_path = os.path.join(self.data_folder_path, OUTPUT_FILE)
         count = 0
         lst = []
