@@ -35,26 +35,33 @@ class ShodanAPI:
         """     
         # Obtain the results from Shodan and store them into a list. 
         print("[+] Retrieving results from Shodan!")
-        results = self.api.search(self.filter)
-        results_list = []
-        for result in results['matches']:
-            sub_results_list = []
-            sub_results_list.append(result['hostnames'])
-            sub_results_list.append(result['ip_str'])
-            sub_results_list.append(result['domains'])
-            sub_results_list.append(result['os'])
-            sub_results_list.append(result['location']['city'])
-            sub_results_list.append(result['location']['region_code'])
-            sub_results_list.append(result['location']['area_code'])
-            sub_results_list.append(result['location']['longitude'])
-            sub_results_list.append(result['location']['postal_code'])
-            sub_results_list.append(result['location']['country_code'])
-            sub_results_list.append(result['location']['country_name'])
-            results_list.append(sub_results_list)
         try:
-            # Store and display the data in a dataframe. 
-            df = pd.DataFrame(np.array(results_list, dtype=object), columns=['hostnames', 'ip', 'domains', 'os', 'city', 'region_code', 'area_code', 'longitude', 'postal_code', 'country_code', 'country_name'],)
-            os.system("clear")
+            results = self.api.search(self.filter)
+            results_list = []
+            for result in results['matches']:
+                sub_results_list = []
+                sub_results_list.append(result['hostnames'])
+                sub_results_list.append(result['ip_str'])
+                sub_results_list.append(result['domains'])
+                sub_results_list.append(result['os'])
+                sub_results_list.append(result['location']['city'])
+                sub_results_list.append(result['location']['region_code'])
+                sub_results_list.append(result['location']['area_code'])
+                sub_results_list.append(result['location']['longitude'])
+                sub_results_list.append(result['location']['postal_code'])
+                sub_results_list.append(result['location']['country_code'])
+                sub_results_list.append(result['location']['country_name'])
+                results_list.append(sub_results_list)
+        except shodan.exception.APIError:
+            print("[!] Unexpected error with the Shodan API! Restart the program.")
+            exit() 
+
+        try:
+            # Store, display & clean the data in a dataframe. 
+            df = pd.DataFrame(np.array(results_list, dtype=object), columns=['hostnames', 'ip', 'domains', 'os', 'city', 'region_code', 'area_code', 'longitude', 'postal_code', 'country_code', 'country_name']).astype(str)
+            df = df.drop_duplicates()
+
+            # os.system("clear")
             print(df.to_string(justify="left", col_space=10))
 
             # Get the user to select a target
@@ -88,7 +95,11 @@ class ShodanAPI:
 
         # Store data into variables
         target = self.target['ip']
-        host = self.api.host(target)
+        try:
+            host = self.api.host(target)
+        except shodan.exception.APIError:
+            print("[!] Unexpected error with the Shodan API! Restart the program.")
+            exit()
         port_list = [str(item['port']) for item in host['data']]
         try:
             cve_list = host['vulns']

@@ -47,20 +47,8 @@ class LocalCveParser:
             last_update_file = open(self.last_update_file_path, "r")
             last_update = last_update_file.read()
             print("[!] Last update was on %s" % last_update)
-            valid = False
+            self.download_csv_file()
 
-            # Check that the user input is valid. 
-            while valid is not True:
-                update = input("[*] Do you wish to update the CVE database? (y/n): ")
-                if update.lower() == "y":
-                    valid = True
-                    print("[+] Updating CVE database...")
-                    self.download_csv_file()
-                elif update.lower() == "n":
-                    valid = True
-                    pass 
-                else:
-                    print("[!] Error! Invalid input entered!")
 
     def download_csv_file(self):
         """"
@@ -68,7 +56,7 @@ class LocalCveParser:
         :param:
         :return:
         """
-        print("[+] Downloading CVE database...")
+        print("\t[+] Updating CVE database...")
         output_path = os.path.join(self.data_folder_path, OUTPUT_FILE)
         download_url = "curl -s http://%s --output %s" % (CVE_URL, output_path)
         os.system(download_url)
@@ -135,4 +123,4 @@ class LocalCveParser:
                     # Store the results into a list and return the list of CVEs.
                     for row in result.itertuples():
                         cve_list.append((row.name, row.description))
-                return cve_list
+        return cve_list
