@@ -4,12 +4,18 @@ import csv
 from os import path
 from datetime import date
 
+
 # Global Variables
 CVE_URL = "cve.mitre.org/data/downloads/allitems.csv"
 INDEX_URL = "cve.mitre.org/data/downloads/"
 INDEX_FILE = "index.html"
 OUTPUT_FILE = "allitems.csv"
-
+PORT = 0
+NAME = 1 
+PRODUCT = 2 
+VERSION = 3 
+KEY = 0 
+VALUE = 1
 
 class LocalCveParser:
     def __init__(self):
@@ -39,7 +45,6 @@ class LocalCveParser:
 
         # Check if the "cve.csv" exists within the "data" folder.
         cve_file = os.path.join(parent_dir, "data", "allitems.csv")
-        print(cve_file)
         if path.exists(cve_file) is False:
             self.download_csv_file()
 
@@ -50,14 +55,13 @@ class LocalCveParser:
             print("[!] Last update was on %s" % last_update)
             self.download_csv_file()
 
-
     def download_csv_file(self):
         """"
 
         :param:
         :return:
         """
-        print("\t[+] Updating CVE database...")
+        print("[+] Updating CVE database...")
         output_path = os.path.join(self.data_folder_path, OUTPUT_FILE)
         download_url = "curl -s http://%s --output %s" % (CVE_URL, output_path)
         os.system(download_url)
@@ -77,14 +81,21 @@ class LocalCveParser:
         self.cve_database_path = os.path.join(self.data_folder_path, OUTPUT_FILE)
         count = 0
         lst = []
-        with open(self.cve_database_path, 'r', encoding="ISO-8859-1") as file:
-            reader = csv.reader(file)
-            for row in reader:
-                if count >= 10:
-                    data = [row[0], row[2]]
-                    lst.append(data)
-                count += 1
-        df = pd.DataFrame(lst, columns=['name', 'description'])
+        success = False 
+
+        while success is False:
+            try:
+                with open(self.cve_database_path, 'r', encoding="ISO-8859-1") as file:
+                    reader = csv.reader(file)
+                    for row in reader:
+                        if count >= 10:
+                            data = [row[0], row[2]]
+                            lst.append(data)
+                        count += 1
+                df = pd.DataFrame(lst, columns=['name', 'description'])
+                success = True
+            except FileNotFoundError:
+                self.check_last_update()
         return df
 
     def search_cve(self, df, search_query):
@@ -103,27 +114,33 @@ class LocalCveParser:
         """
         df = self.parse_cev()
         cve_list = []
-        for service in service_list:
-            word_list = service_list['product'].split(" ")
+        items = list(service_list.values())
+      
+        port = items[PORT]
+        name = items[NAME]
+        product = items[PRODUCT]
+        version = items[VERSION]
 
-            # Check that the product field is not empty.
-            if len(word_list) != 0:
-                # Include the product into the search list based on certain requirements.
-                if len(word_list) > 1:
-                    search_query = " ".join(word_list[:2])
-                else:
-                    search_query = word_list[0]
+        search_queries = [] 
 
-                # Include the version into the search list is it exist.
-                version = service_list['version']
-                if version != "":
-                    search_query = "%s %s" % (search_query, version)
+        if name == "" and product == "" and version == "":
+            pass 
+        
+        if name != "" and product != "" and version != "":
+            search_query_one =  "%s %s %s" % (name, product, version)
+            search_query_two = "%s %s" % (name, product)
+            search_queries.append(search_query_one)
+            search_queries.append(search_query_two)
 
-                # Check against the .csv file if a CVE exist if the search query is not empty.
-                if search_query != "":
-                    result = self.search_cve(df, search_query)
+        if name != "" and product != "" and version == "":
+            search_query = "%s %s" % (name, product)
+            search_queries.append(search_query)
 
-                    # Store the results into a list and return the list of CVEs.
-                    for row in result.itertuples():
-                        cve_list.append((row.name, row.description))
+        for item in search_queries:
+            result = self.search_cve(df, item)
+
+            # Store the results into a list and return the list of CVEs.
+            for row in result.itertuples():
+                cve_list.append((row.name, row.description))
+
         return cve_list
