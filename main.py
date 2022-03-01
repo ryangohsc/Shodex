@@ -157,11 +157,11 @@ def offline_mode(speed, target, port_list, cve_list):
             print("\nPotential Vulnerable CVEs")
             print(df.to_string(justify="left", col_space=10))
 
-            # Ask the user if they want to use the recommended exloit.
+            # Ask the user if they want to use the recommended exploit.
             recommended_cve = use_recommended_cve(df)
-            if recommended_exploit is not None:
-                exploit_path = recommended_exploit.split("/")[-1]
-                exploit_ext = recommended_exploit.split(".")[1]
+            if recommended_cve is not None:
+                exploit_path = recommended_cve
+                exploit_ext = recommended_cve.split(".")[1]
 
                 # Arm the exploit. 
                 exploit_loader = ExploitLoader(exploit_path, exploit_ext)
