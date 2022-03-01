@@ -1,8 +1,10 @@
 import os
 import pandas as pd
 import csv
+import re
 from os import path
 from datetime import date
+from itertools import combinations
 
 
 # Global Variables
@@ -122,19 +124,26 @@ class LocalCveParser:
         version = items[VERSION]
 
         search_queries = [] 
+        pattern = r".. [0-9].."
 
-        if name == "" and product == "" and version == "":
+        if product == "" and version == "":
             pass 
         
-        if name != "" and product != "" and version != "":
-            search_query_one =  "%s %s %s" % (name, product, version)
-            search_query_two = "%s %s" % (name, product)
-            search_queries.append(search_query_one)
-            search_queries.append(search_query_two)
+        if product != "" and version != "":
+            product_words = product.split(" ")
+            version_words = version.split(" ")
+            all_words = product_words + version_words
 
-        if name != "" and product != "" and version == "":
-            search_query = "%s %s" % (name, product)
-            search_queries.append(search_query)
+            total_combinations = []
+            for n in range(0, len(all_words) + 1):
+                total_combinations.append([i for i in combinations(all_words, n)])
+            
+            for item in total_combinations:
+                for combination in item:
+                    if len(combination) != 1:
+                        search_query = " ".join(combination)
+                        if re.search(pattern, search_query):
+                            search_queries.append(search_query)
 
         for item in search_queries:
             result = self.search_cve(df, item)

@@ -149,11 +149,11 @@ def offline_mode(speed, target, port_list, cve_list):
             # Append the cve to the list.
             if port_cve:
                 for item2 in port_cve:
-                    lst.append([item['port'], item2[0], item2[1]])
+                    lst.append([item2[0].strip(" "), item2[1].strip(" ")])
 
         # Store and clean the data.
         try:
-            df = pd.DataFrame(np.array(lst, dtype=object), columns=['port', 'name', 'desc'])
+            df = pd.DataFrame(np.array(lst, dtype=object), columns=['name', 'desc'])
             print("\nPotential Vulnerable CVEs")
             print(df.to_string(justify="left", col_space=10))
 
