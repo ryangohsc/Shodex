@@ -51,7 +51,7 @@ def telnetbrute(hostname, username, password):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="HTTP Bruteforce Python Script")
+    parser = argparse.ArgumentParser(description="Telnet Bruteforce Python Script")
     parser.add_argument("host", help="Hostname or IP Address of Server to brute force")
     parser.add_argument("-P", "--passlist", help="Password list text file")
     parser.add_argument("-u", "--user", help="Host username")
