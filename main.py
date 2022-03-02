@@ -1,5 +1,6 @@
 import argparse
 import cowsay
+import modules.exploit_db
 from shodex_engine import *
 
 
@@ -10,7 +11,7 @@ def splashscreen():
     :return: None.
     """
     cowsay.tux("Project Shodex! IoT devices scanning simplified!")
-    print("Desc: <insert desc here")
+    print("Desc: Project Shodex by Team Pizzaluvers")
 
 
 def init_arg_parser():
@@ -52,6 +53,7 @@ def main():
     if update:
         cve_parser = LocalCveParser()
         cve_parser.check_last_update()
+        modules.exploit_db.force_update()
         exit()
 
     # Initiate online Mode. 
