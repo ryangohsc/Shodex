@@ -3,6 +3,7 @@ from modules.shodan_api import *
 from modules.nmap import *
 from modules.local_cve_parser import *
 from modules.exploit_loader import *
+from tabulate import tabulate
 
 
 def use_recommended_cve(df):
@@ -151,6 +152,7 @@ def offline_mode(speed, target, port_list, cve_list):
         return
 
     # Check if there are any services and CVEs found for each IP
+    exist = False
     ips = service_list.keys()
     cve_parser = LocalCveParser()
     for ip in ips:
@@ -162,21 +164,27 @@ def offline_mode(speed, target, port_list, cve_list):
             # Append the cve to the list.
             if port_cve:
                 for item2 in port_cve:
-                    lst.append([item2[0].strip(" "), item2[1].strip(" ")])
+                    cve_name = item2[0].strip(" ")
+                    lst.append([cve_name])
 
                 # Store and clean the data.
                 try:
-                    df = pd.DataFrame(np.array(lst, dtype=object), columns=['name', 'desc'])
+                    df = pd.DataFrame(np.array(lst, dtype=object), columns=['name'])
                     print("\n[*] Potential Vulnerable CVEs")
-                    print(df.to_string(justify="left", col_space=10))
+                    print("Note: The description is unabled to be displayed due to display limitations.")
+                    print(tabulate(df, headers='keys', tablefmt='psql'))
 
-                    # Ask the user if they want to use the recommended exloit.
+                    # Ask the user if they want to use the recommended exploit.
                     recommended_cve = use_recommended_cve(df)
 
                     # Ask the user if they want to use a local exploit.
                     if not recommended_cve:
                         use_local_exploit()
+                        exist = True
 
                 except ValueError:
-                    print("[!] No recommended CVEs!")
-                    use_local_exploit()
+                    pass
+
+    # Display error message if no recommended CVEs are found.
+    if not exist:
+        print("[!] No recommended CVEs!")

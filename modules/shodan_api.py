@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import time
 import os
+from tabulate import tabulate
 
 
 class ShodanAPI:
@@ -62,7 +63,7 @@ class ShodanAPI:
             df = df.drop_duplicates()
             df = df.reset_index(drop=True)
             os.system("clear")
-            print(df.to_string(justify="left", col_space=10))
+            print(tabulate(df, headers='keys', tablefmt='psql'))
 
             # Get the user to select a target
             df_len = len(df)
