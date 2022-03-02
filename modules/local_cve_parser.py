@@ -1,14 +1,21 @@
 import os
 import pandas as pd
 import csv
+import re
 from os import path
 from datetime import date
+from itertools import combinations
+
 
 # Global Variables
 CVE_URL = "cve.mitre.org/data/downloads/allitems.csv"
 INDEX_URL = "cve.mitre.org/data/downloads/"
 INDEX_FILE = "index.html"
 OUTPUT_FILE = "allitems.csv"
+PRODUCT = 2 
+VERSION = 3 
+KEY = 0 
+VALUE = 1
 
 
 class LocalCveParser:
@@ -24,11 +31,11 @@ class LocalCveParser:
 
     def check_last_update(self):
         """"
-
-        :param:
-        :return:
+        Check if the local .csv list is up-to-date.
+        :param: self.
+        :return: None.
         """
-        parent_dir = os.path.dirname(os.getcwd())
+        parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
         self.data_folder_path = os.path.join(parent_dir, "data")
         self.last_update_file_path = os.path.join(self.data_folder_path, 'last_update.txt')
 
@@ -47,28 +54,15 @@ class LocalCveParser:
             last_update_file = open(self.last_update_file_path, "r")
             last_update = last_update_file.read()
             print("[!] Last update was on %s" % last_update)
-            valid = False
-
-            # Check that the user input is valid. 
-            while valid is not True:
-                update = input("[*] Do you wish to update the CVE database? (y/n): ")
-                if update.lower() == "y":
-                    valid = True
-                    print("[+] Updating CVE database...")
-                    self.download_csv_file()
-                elif update.lower() == "n":
-                    valid = True
-                    pass 
-                else:
-                    print("[!] Error! Invalid input entered!")
+            self.download_csv_file()
 
     def download_csv_file(self):
         """"
-
-        :param:
-        :return:
+        Downloads the .csv file from the internet.
+        :param: self.
+        :return: None. 
         """
-        print("[+] Downloading CVE database...")
+        print("[+] Updating CVE database...")
         output_path = os.path.join(self.data_folder_path, OUTPUT_FILE)
         download_url = "curl -s http://%s --output %s" % (CVE_URL, output_path)
         os.system(download_url)
@@ -79,26 +73,36 @@ class LocalCveParser:
 
     def parse_cev(self):
         """"
-
-        :param:
-        :return:
+        Parses the .csv file and stores all of its data into a dataframe, specifically the CVE name and description.
+        :param: self.
+        :return: df.
         """
+        parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+        self.data_folder_path = os.path.join(parent_dir, "data")
         self.cve_database_path = os.path.join(self.data_folder_path, OUTPUT_FILE)
         count = 0
         lst = []
-        with open(self.cve_database_path, 'r', encoding="ISO-8859-1") as file:
-            reader = csv.reader(file)
-            for row in reader:
-                if count >= 10:
-                    data = [row[0], row[2]]
-                    lst.append(data)
-                count += 1
-        df = pd.DataFrame(lst, columns=['name', 'description'])
+        success = False 
+
+        # Parses the .csv file and stores its data into a dataframe.
+        while success is False:
+            try:
+                with open(self.cve_database_path, 'r', encoding="ISO-8859-1") as file:
+                    reader = csv.reader(file)
+                    for row in reader:
+                        if count >= 10:
+                            data = [row[0], row[2]]
+                            lst.append(data)
+                        count += 1
+                df = pd.DataFrame(lst, columns=['name', 'description'])
+                success = True
+            except FileNotFoundError:
+                self.check_last_update()
         return df
 
     def search_cve(self, df, search_query):
         """"
-
+        Searches the dataframe which
         :param:
         :return:
         """
@@ -112,27 +116,41 @@ class LocalCveParser:
         """
         df = self.parse_cev()
         cve_list = []
-        for service in service_list:
-            word_list = service_list['product'].split(" ")
+        items = list(service_list.values())
+        product = items[PRODUCT]
+        version = items[VERSION]
+        search_queries = [] 
+        pattern = r".. [0-9].."
 
-            # Check that the product field is not empty.
-            if len(word_list) != 0:
-                # Include the product into the search list based on certain requirements.
-                if len(word_list) > 1:
-                    search_query = " ".join(word_list[:2])
-                else:
-                    search_query = word_list[0]
+        # Ignore if the product and version are empty.
+        if product == "" and version == "":
+            pass 
 
-                # Include the version into the search list is it exist.
-                version = service_list['version']
-                if version != "":
-                    search_query = "%s %s" % (search_query, version)
+        # Search the dataframe if the product and version are not empty.
+        if product != "" and version != "":
+            product_words = product.split(" ")
+            version_words = version.split(" ")
+            all_words = product_words + version_words
+            total_combinations = []
 
-                # Check against the .csv file if a CVE exist if the search query is not empty.
-                if search_query != "":
-                    result = self.search_cve(df, search_query)
+            # Generates a combination of the search queries which composites of the product and version.
+            for n in range(0, len(all_words) + 1):
+                total_combinations.append([i for i in combinations(all_words, n)])
 
-                    # Store the results into a list and return the list of CVEs.
-                    for row in result.itertuples():
-                        cve_list.append((row.name, row.description))
-                return cve_list
+            # Optimise the search queries to attempt to minimise false positives.
+            for item in total_combinations:
+                for combination in item:
+                    if len(combination) != 1:
+                        search_query = " ".join(combination)
+                        if re.search(pattern, search_query):
+                            search_queries.append(search_query)
+
+        # Search against the dataframe for matches.
+        for item in search_queries:
+            result = self.search_cve(df, item)
+
+            # Store the results into a list and return the list of CVEs.
+            for row in result.itertuples():
+                cve_list.append((row.name, row.description))
+
+        return cve_list

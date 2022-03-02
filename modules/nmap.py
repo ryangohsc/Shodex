@@ -72,7 +72,6 @@ class Nmap:
                     print('\tExtra Info: %s\n' % extra_info)
 
                     temp.append({'port': port, 'name': name, 'product': product, 'version': version})
-
                     count += 1
                 cve_info[ip] = temp
             except KeyError:
