@@ -8,6 +8,11 @@ current_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
 
 def search_cve(cve_list):
+    """
+    Searches for cve in packetstorm using cve.cirl.lu API
+    :param cve_list:
+    :return: result['links'] or None
+    """
     host = "http://cve.circl.lu/api/cve/"
 
     for cve in cve_list:
@@ -41,6 +46,11 @@ def search_cve(cve_list):
 
 
 def download_files(link):
+    """
+    Downloads the chosen file
+    :param link:
+    :return: None
+    """
     r = get(link, headers=headers, timeout=10)
     pattern = "/files/download/(.*)/(.*).txt"
     result = re.search(pattern, str(r.content)).group()
@@ -54,6 +64,11 @@ def download_files(link):
 
 
 def run(cve_list):
+    """
+    Returns a list of links
+    :param cve_list:
+    :return: link_list
+    """
     link_list = search_cve(cve_list)
     return link_list
 
