@@ -49,6 +49,12 @@ def main():
     ondemand = args.ondemand
     update = args.update
 
+    # Check arguments.
+    if ondemand:
+        if api_key is None:
+            print("[!] Please enter the shodan API key.")
+            exit()
+
     # Initiate update mode. 
     if update:
         cve_parser = LocalCveParser()
