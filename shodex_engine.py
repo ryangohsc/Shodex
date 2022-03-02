@@ -27,7 +27,7 @@ def use_recommended_cve(df):
 
                 # If a recommended exploit is found.
                 if found is True:
-                    exploit_path = exploit_file_path.split("/")[-1]
+                    exploit_path = exploit_file_path
                     exploit_ext = exploit_file_path.split(".")[1]
 
                     # Arm the exploit.
