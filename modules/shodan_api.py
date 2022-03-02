@@ -34,7 +34,7 @@ class ShodanAPI:
         :return: None.
         """     
         # Obtain the results from Shodan and store them into a list. 
-        print("[+] Retrieving results from Shodan!")
+        print("[*] Retrieving results from Shodan!")
         try:
             results = self.api.search(self.filter)
             results_list = []
@@ -60,8 +60,8 @@ class ShodanAPI:
             # Store, display & clean the data in a dataframe. 
             df = pd.DataFrame(np.array(results_list, dtype=object), columns=['hostnames', 'ip', 'domains', 'os', 'city', 'region_code', 'area_code', 'longitude', 'postal_code', 'country_code', 'country_name']).astype(str)
             df = df.drop_duplicates()
-
-            # os.system("clear")
+            df = df.reset_index(drop=True)
+            os.system("clear")
             print(df.to_string(justify="left", col_space=10))
 
             # Get the user to select a target
@@ -69,7 +69,7 @@ class ShodanAPI:
             valid = False 
             while valid is not True:
                 # Prompt the user for a target
-                target = int(input("[!] Select a target (e.g. 5): "))
+                target = int(input("\n[+] Select a target (e.g. 5): "))
 
                 # Check that the input entered is valid. 
                 if target not in range(0, df_len):
@@ -85,7 +85,7 @@ class ShodanAPI:
 
     def retrieve_info(self):
         """"
-        Retreieves the info on the target selected by the user. 
+        Retrieves the info on the target selected by the user.
         :param: self.
         :return: None.
         """     
@@ -113,8 +113,8 @@ class ShodanAPI:
         print("\tCity: %s" % host['city'])
         print("\tCountry: %s" % host['country_name'])
         print("\tOS: %s" % host['os'])
-        print("\tDomains: %s" % host['domains'])
-        print("\tHostnames: %s" % host['hostnames'])
+        print("\tDomains: %s" % " ".join(host['domains']))
+        print("\tHostnames: %s" % " ".join(host['hostnames']))
         print("\tISP: %s" % host['isp'])
         print("\tOrg: %s" % host['org'])
         print("\tPorts: %s\n" % ', '.join(port_list))

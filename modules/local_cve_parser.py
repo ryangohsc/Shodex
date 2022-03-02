@@ -12,12 +12,11 @@ CVE_URL = "cve.mitre.org/data/downloads/allitems.csv"
 INDEX_URL = "cve.mitre.org/data/downloads/"
 INDEX_FILE = "index.html"
 OUTPUT_FILE = "allitems.csv"
-PORT = 0
-NAME = 1 
 PRODUCT = 2 
 VERSION = 3 
 KEY = 0 
 VALUE = 1
+
 
 class LocalCveParser:
     def __init__(self):
@@ -32,9 +31,9 @@ class LocalCveParser:
 
     def check_last_update(self):
         """"
-
-        :param:
-        :return:
+        Check if the local .csv list is up-to-date.
+        :param: self.
+        :return: None.
         """
         parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
         self.data_folder_path = os.path.join(parent_dir, "data")
@@ -59,9 +58,9 @@ class LocalCveParser:
 
     def download_csv_file(self):
         """"
-
-        :param:
-        :return:
+        Downloads the .csv file from the internet.
+        :param: self.
+        :return: None. 
         """
         print("[+] Updating CVE database...")
         output_path = os.path.join(self.data_folder_path, OUTPUT_FILE)
@@ -74,9 +73,9 @@ class LocalCveParser:
 
     def parse_cev(self):
         """"
-
-        :param:
-        :return:
+        Parses the .csv file and stores all of its data into a dataframe, specifically the CVE name and description.
+        :param: self.
+        :return: df.
         """
         parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
         self.data_folder_path = os.path.join(parent_dir, "data")
@@ -85,6 +84,7 @@ class LocalCveParser:
         lst = []
         success = False 
 
+        # Parses the .csv file and stores its data into a dataframe.
         while success is False:
             try:
                 with open(self.cve_database_path, 'r', encoding="ISO-8859-1") as file:
@@ -102,7 +102,7 @@ class LocalCveParser:
 
     def search_cve(self, df, search_query):
         """"
-
+        Searches the dataframe which
         :param:
         :return:
         """
@@ -117,27 +117,27 @@ class LocalCveParser:
         df = self.parse_cev()
         cve_list = []
         items = list(service_list.values())
-      
-        port = items[PORT]
-        name = items[NAME]
         product = items[PRODUCT]
         version = items[VERSION]
-
         search_queries = [] 
         pattern = r".. [0-9].."
 
+        # Ignore if the product and version are empty.
         if product == "" and version == "":
             pass 
-        
+
+        # Search the dataframe if the product and version are not empty.
         if product != "" and version != "":
             product_words = product.split(" ")
             version_words = version.split(" ")
             all_words = product_words + version_words
-
             total_combinations = []
+
+            # Generates a combination of the search queries which composites of the product and version.
             for n in range(0, len(all_words) + 1):
                 total_combinations.append([i for i in combinations(all_words, n)])
-            
+
+            # Optimise the search queries to attempt to minimise false positives.
             for item in total_combinations:
                 for combination in item:
                     if len(combination) != 1:
@@ -145,6 +145,7 @@ class LocalCveParser:
                         if re.search(pattern, search_query):
                             search_queries.append(search_query)
 
+        # Search against the dataframe for matches.
         for item in search_queries:
             result = self.search_cve(df, item)
 
