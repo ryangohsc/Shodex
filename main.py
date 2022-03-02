@@ -49,6 +49,27 @@ def main():
     ondemand = args.ondemand
     update = args.update
 
+    # Check arguments.
+    if ondemand:
+        if api_key is None:
+            print("[!] Please enter the shodan API key.")
+            exit()
+
+    # Check if folders exists
+    parent_dir = os.getcwd()
+    data_path = os.path.join(parent_dir, "data")
+    if not os.path.exists(data_path):
+        os.makedirs(data_path)
+    exploit_path = os.path.join(parent_dir, "data", "local_exploits")
+    if not os.path.exists(exploit_path):
+        os.makedirs(exploit_path)
+    wordlist_path = os.path.join(parent_dir, "data", "wordlists")
+    if not os.path.exists(wordlist_path):
+        os.makedirs(wordlist_path)
+    downloads_path = os.path.join(parent_dir, "downloads")
+    if not os.path.exists(downloads_path):
+        os.makedirs(downloads_path)
+
     # Initiate update mode. 
     if update:
         cve_parser = LocalCveParser()
