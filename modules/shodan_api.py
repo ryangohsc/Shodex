@@ -40,18 +40,23 @@ class ShodanAPI:
             results = self.api.search(self.filter)
             results_list = []
             for result in results['matches']:
-                sub_results_list = []
-                sub_results_list.append(result['hostnames'])
-                sub_results_list.append(result['ip_str'])
-                sub_results_list.append(result['domains'])
-                sub_results_list.append(result['os'])
-                sub_results_list.append(result['location']['city'])
-                sub_results_list.append(result['location']['region_code'])
-                sub_results_list.append(result['location']['area_code'])
-                sub_results_list.append(result['location']['longitude'])
-                sub_results_list.append(result['location']['postal_code'])
-                sub_results_list.append(result['location']['country_code'])
-                sub_results_list.append(result['location']['country_name'])
+                hostnames = ", ".join(result['hostnames'])
+                if not hostnames:
+                    hostnames = None
+                domains = ", ".join(result['domains'])
+                if not domains:
+                    domains = None
+                ip = result['ip_str']
+                operating_system = result['os']
+                city = result['location']['city']
+                region_code = result['location']['region_code']
+                area_code = result['location']['area_code']
+                longtitude = result['location']['longitude']
+                postal_code = result['location']['postal_code']
+                country_code = result['location']['country_code']
+                country_name = result['location']['country_name']
+                sub_results_list = [hostnames, ip, domains, operating_system, city, region_code, area_code, longtitude,
+                                    postal_code, country_code, country_name]
                 results_list.append(sub_results_list)
         except shodan.exception.APIError:
             print("[!] Unexpected error with the Shodan API! Restart the program.")

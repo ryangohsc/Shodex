@@ -144,10 +144,10 @@ def offline_mode(speed, target, port_list, cve_list):
     nmap = Nmap()
     if speed is None:
         speed = "quick"
-    service_list, total_hosts, down_hosts = nmap.run(target, speed, port_list)
+    service_list = nmap.run(target, speed, port_list)
 
     # End the process if no hosts are up
-    if down_hosts == total_hosts:
+    if service_list == {}:
         print("[!] Error! No hosts are up!")
         return
 
