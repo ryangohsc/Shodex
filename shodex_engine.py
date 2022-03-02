@@ -171,7 +171,7 @@ def offline_mode(speed, target, port_list, cve_list):
                 try:
                     df = pd.DataFrame(np.array(lst, dtype=object), columns=['name'])
                     print("\n[*] Potential Vulnerable CVEs")
-                    print("Note: The description is unabled to be displayed due to display limitations.")
+                    print("Note: The description is unable to be displayed due to display limitations.")
                     print(tabulate(df, headers='keys', tablefmt='psql'))
 
                     # Ask the user if they want to use the recommended exploit.
