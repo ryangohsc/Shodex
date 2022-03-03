@@ -41,7 +41,11 @@ def download_files(arg_link):
     folder_name = arg_link.rsplit("/", 1)[-1]
     path = "%s/downloads/%s" % (current_path, folder_name)
     git_link = "%s.git" % arg_link
-    git.Repo.clone_from(git_link, path)
+    if not os.path.exists(path):
+        print("[+] Downloading %s" % arg_link)
+        git.Repo.clone_from(git_link, path)
+    else:
+        print("[!] The folder already exists!")
 
 
 def run(cve_list):
