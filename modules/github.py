@@ -47,7 +47,7 @@ def download_files(arg_link):
     path = "%s/downloads/%s" % (current_path, folder_name)
     git_link = "%s.git" % arg_link
     if not os.path.exists(path):
-        print("[+] Downloading %s" % arg_link)
+        print("[!] Downloading %s" % arg_link)
         git.Repo.clone_from(git_link, path)
     else:
         print("[!] The folder already exists!")
