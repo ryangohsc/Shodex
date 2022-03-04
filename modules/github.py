@@ -1,7 +1,9 @@
+import alive_progress
 from requests import get
 from json import loads
 import os
 import git
+import time
 
 headers = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:58.0)Gecko/20100101 Firefox/58.0"}
 current_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
@@ -26,9 +28,12 @@ def search_cve(cve_list):
         if http_obj.json():
             list_of_links = []
             json_obj = loads(http_obj.text)
-            total_count = json_obj["total_count"]
-            for i in range(total_count):
-                list_of_links.append(json_obj["items"][i]["html_url"])
+            total_count = len(json_obj["items"])
+            with alive_progress.alive_bar(total_count) as bar:
+                for x in range(total_count):
+                    list_of_links.append(json_obj["items"][x]["html_url"])
+                    time.sleep(0.05)
+                    bar()
             return list_of_links
 
 
@@ -42,7 +47,7 @@ def download_files(arg_link):
     path = "%s/downloads/%s" % (current_path, folder_name)
     git_link = "%s.git" % arg_link
     if not os.path.exists(path):
-        print("[+] Downloading %s" % arg_link)
+        print("[!] Downloading %s" % arg_link)
         git.Repo.clone_from(git_link, path)
     else:
         print("[!] The folder already exists!")

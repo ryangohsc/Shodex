@@ -2,6 +2,7 @@ import argparse
 import cowsay
 import modules.exploit_db
 from shodex_engine import *
+import os
 
 
 def splashscreen():
@@ -20,7 +21,7 @@ def init_arg_parser():
     :param: None.
     :return: None.
     """
-    parser = argparse.ArgumentParser(description="ICT2206 - Project Shodex", epilog="ICT2206 Assignment 1 Team x")
+    parser = argparse.ArgumentParser(description="ICT2206 - Project Shodex", epilog="ICT2206 Assignment 1 Team Pizzaluvers")
     parser.add_argument("--api_key", help="Shodan API key.", required=False)
     parser.add_argument("--filter", help="Shodan search filter.", required=False)
     parser.add_argument("--ondemand", help="Shodan on-demand scan a target.", required=False)

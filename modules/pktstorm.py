@@ -1,4 +1,6 @@
 import re
+import time
+import alive_progress
 from requests import get
 from json import loads
 import os
@@ -36,11 +38,14 @@ def search_cve(cve_list):
 
             if 'references' in json_obj:
                 for idx_misc in json_obj['references']:
-                    ref_misc.add(idx_misc)
+                    if "packetstormsecurity.com/files/" in idx_misc:
+                        ref_misc.add(idx_misc)
                 if len(ref_misc) > 0:
-                    for link in sorted(ref_misc):
-                        if "packetstormsecurity.com/files/" in link:
+                    with alive_progress.alive_bar(len(ref_misc)) as bar:
+                        for link in sorted(ref_misc):
                             result['links'].append(link)
+                            time.sleep(0.05)
+                            bar()
         return result['links']
     return None
 
