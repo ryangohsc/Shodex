@@ -45,7 +45,8 @@ def use_recommended_cve(df):
                     print("\n[!] Unable to find the CVE in exploit-db!")
                     valid = False
                     while valid is not True:
-                        choice = input("\n[+] Do you wish to use search for the CVE online? Searching online disables the autoloader feature. (y/n): ")
+                        choice = input("\n[+] Do you wish to use search for the CVE online? Searching online disables "
+                                       "the autoloader feature. (y/n): ")
                         if choice.lower() == "y":
                             print("\n[!] Searching PacketStormSecurity")
                             pktstorm_link = modules.pktstorm.run([search_list])
@@ -64,12 +65,14 @@ def use_recommended_cve(df):
                                 if "packetstormsecurity" in choice_link:
                                     print("[!] Downloading in progress")
                                     modules.pktstorm.download_files(choice_link)
-                                    print("[!] Downloading completed, downloaded files are located in the downloads folder")
+                                    print("[!] Downloading completed, downloaded files are located in the downloads "
+                                          "folder")
                                     sys.exit(0)
                                 elif "github" in choice_link:
                                     print("[!] Downloading in progress")
                                     modules.github.download_files(choice_link)
-                                    print("[!] Downloading completed, download files are located in the downloads folder")
+                                    print("[!] Downloading completed, downloaded files are located in the downloads "
+                                          "folder")
                                     sys.exit(0)
 
                         # The user does not wish to search online.
