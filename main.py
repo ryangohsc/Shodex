@@ -1,8 +1,7 @@
 import argparse
 import cowsay
-import modules.exploit_db
-import os
 from shodex_engine import *
+import os
 
 
 def splashscreen():
@@ -75,7 +74,8 @@ def main():
     if update:
         cve_parser = LocalCveParser()
         cve_parser.check_last_update()
-        modules.exploit_db.force_update()
+        exploit_db = ExploitDb()
+        exploit_db.force_update()
         exit()
 
     # Initiate online Mode. 

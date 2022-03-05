@@ -4,7 +4,6 @@ import os
 import alive_progress
 from requests import get
 from json import loads
-from .misc import * 
 
 
 # Global variables 
