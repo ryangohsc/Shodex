@@ -36,17 +36,32 @@ class Nmap:
         with alive_progress.alive_bar(len(port_list)) as bar:
             for port in port_list:
                 result = scanner.scan(ip, str(port))
-                state = result['scan'][ip]['tcp'][int(port)]['state']
-                name = result['scan'][ip]['tcp'][int(port)]['name']
-                product = result['scan'][ip]['tcp'][int(port)]['product']
-                version = result['scan'][ip]['tcp'][int(port)]['version']
-                extra_info = result['scan'][ip]['tcp'][int(port)]['extrainfo']
+                try:
+                    state = result['scan'][ip]['tcp'][int(port)]['state']
+                except KeyError:
+                    state = "" 
+                try:
+                    name = result['scan'][ip]['tcp'][int(port)]['name']
+                except KeyError:
+                    name = "" 
+                try:
+                    product = result['scan'][ip]['tcp'][int(port)]['product']
+                except KeyError:
+                    product = "" 
+                try:
+                    version = result['scan'][ip]['tcp'][int(port)]['version']
+                except KeyError:
+                    version = ""
+                try: 
+                    extra_info = result['scan'][ip]['tcp'][int(port)]['extrainfo']
+                except KeyError:
+                    extra_info = "" 
                 lst.append([port, state, name, product, version, extra_info])
                 cve_info_list.append({'port': port, 'name': name, 'product': product, 'version': version})
                 cve_info[ip] = cve_info_list
                 time.sleep(0.005)
                 bar()
-        print("[!] Open Ports")
+        print("\n[!] Open Ports")
         df = pd.DataFrame(np.array(lst, dtype=object), columns=['port', 'state', 'name', 'product', 'version', 'extra_info']).astype(str)
         print(tabulate(df, headers='keys', tablefmt='psql'))
         return cve_info
