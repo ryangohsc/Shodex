@@ -4,9 +4,21 @@ from json import loads
 import os
 import git
 import time
+from alive_progress import alive_bar
 
 headers = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:58.0)Gecko/20100101 Firefox/58.0"}
 current_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+
+
+class CloneProgress(git.RemoteProgress):
+    def __init__(self):
+        super().__init__()
+        self.alive_bar_instance = None
+
+    def update(self, op_code, cur_count, max_count=None, message=''):
+        self.alive_bar_instance.total = max_count
+        self.alive_bar_instance.n = cur_count
+        self.alive_bar_instance.refresh()
 
 
 def search_cve(cve_list):
@@ -48,7 +60,7 @@ def download_files(arg_link):
     git_link = "%s.git" % arg_link
     if not os.path.exists(path):
         print("[!] Downloading %s" % arg_link)
-        git.Repo.clone_from(git_link, path)
+        git.Repo.clone_from(git_link, path, progress=CloneProgress())
     else:
         print("[!] The folder already exists!")
 
