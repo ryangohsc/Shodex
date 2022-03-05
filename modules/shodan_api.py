@@ -25,7 +25,7 @@ class ShodanAPI:
         :return: None.
         """     
         print("[+] API Key Successfully Loaded!")
-        print("[!] Only the first 100 results of the Shodan Cralwer will be displayed as this is an Edu Account!\n")
+        print("[!] Only the first 100 results of the Shodan Crawler will be displayed as this is an Edu Account!\n")
         time.sleep(5)
 
     def search_filter(self):

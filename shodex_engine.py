@@ -1,4 +1,8 @@
+import sys
+import pandas as pd
 import modules.exploit_db
+import modules.pktstorm
+import modules.github
 from modules.shodan_api import *
 from modules.nmap import *
 from modules.local_cve_parser import *
@@ -22,7 +26,7 @@ def use_recommended_cve(df):
             row_choice = input("\t[+] Enter row no: ")
             if int(row_choice) not in range(len(df)):
                 print("[!] Error! Invalid input entered!")
-            else: 
+            else:
                 search_list = df.iloc[[row_choice]].name.to_string().split(" ")[4]
                 found, exploit_file_path = modules.exploit_db.run([search_list])
 
@@ -36,8 +40,48 @@ def use_recommended_cve(df):
                     exploit_loader.run()
                     return True
 
-                # If a recommended exploit is not found.
+                # If a recommended exploit is not found in exploit-db.
                 else:
+                    print("\n[!] Unable to find the CVE in exploit-db!")
+                    valid = False
+                    while valid is not True:
+                        choice = input("\n[+] Do you wish to use search for the CVE online? Searching online disables "
+                                       "the autoloader feature. (y/n): ")
+                        if choice.lower() == "y":
+                            print("\n[!] Searching PacketStormSecurity")
+                            pktstorm_link = modules.pktstorm.run([search_list])
+                            pktstorm_df = pd.DataFrame({"link": pktstorm_link})
+                            print("\n[!] Searching GitHub")
+                            github_link = modules.github.run([search_list])
+                            github_df = pd.DataFrame({"link": github_link})
+                            online_df = [pktstorm_df, github_df]
+                            result_df = pd.concat(online_df)
+                            print(tabulate(result_df, headers='keys', tablefmt='psql'))
+                            row_choice = input("\t[+] Enter row no: ")
+                            if int(row_choice) not in range(len(result_df)):
+                                print("[!] Error! Invalid input entered!")
+                            else:
+                                choice_link = result_df.iloc[[row_choice]].link[0]
+                                if "packetstormsecurity" in choice_link:
+                                    print("[!] Downloading in progress")
+                                    modules.pktstorm.download_files(choice_link)
+                                    print("[!] Downloading completed, downloaded files are located in the downloads "
+                                          "folder")
+                                    sys.exit(0)
+                                elif "github" in choice_link:
+                                    print("[!] Downloading in progress")
+                                    modules.github.download_files(choice_link)
+                                    print("[!] Downloading completed, downloaded files are located in the downloads "
+                                          "folder")
+                                    sys.exit(0)
+
+                        # The user does not wish to search online.
+                        elif choice.lower() == "n":
+                            return None
+                        # The user supplies an invalid input.
+                        else:
+                            print("[!] Error! Invalid input entered!")
+
                     return None
 
         # The user does not wish to use a recommended exploit.
@@ -171,7 +215,7 @@ def offline_mode(speed, target, port_list, cve_list):
                 try:
                     df = pd.DataFrame(np.array(lst, dtype=object), columns=['name'])
                     print("\n[*] Potential Vulnerable CVEs")
-                    print("Note: The description is unabled to be displayed due to display limitations.")
+                    print("Note: The description is unable to be displayed due to display limitations.")
                     print(tabulate(df, headers='keys', tablefmt='psql'))
 
                     # Ask the user if they want to use the recommended exploit.
