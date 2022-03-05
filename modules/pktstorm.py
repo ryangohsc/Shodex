@@ -15,7 +15,7 @@ def search_cve(cve_list):
     :param cve_list:
     :return: result['links'] or None
     """
-    host = "http://cve.circl.lu/api/cve/"
+    host = "https://cvepremium.circl.lu/api/cve/"
 
     for cve in cve_list:
         try:
@@ -26,28 +26,19 @@ def search_cve(cve_list):
             return None
 
         if http_obj.json():
-            # dictionary object containing cve description and available exploits
-            result = {'links': []}
-
-            json_obj = loads(http_obj.text.encode('ascii', 'utf-8'))
-            ref_misc = set()
-
-            # cve publishing date and cve description
-            result['description'] = json_obj['summary']
-            result['date'] = json_obj['Published'][:10]
-
-            if 'references' in json_obj:
-                for idx_misc in json_obj['references']:
-                    if "packetstormsecurity.com/files/" in idx_misc:
-                        ref_misc.add(idx_misc)
-                if len(ref_misc) > 0:
-                    with alive_progress.alive_bar(len(ref_misc)) as bar:
-                        for link in sorted(ref_misc):
-                            result['links'].append(link)
-                            time.sleep(0.05)
-                            bar()
-        return result['links']
-    return None
+            pktstorm_link = []
+            list_of_links = []
+            json_obj = loads(http_obj.text)
+            for i in json_obj["references"]:
+                if "packetstormsecurity.com/files/" in i:
+                    pktstorm_link.append(i)
+            total_count = len(pktstorm_link)
+            with alive_progress.alive_bar(total_count) as bar:
+                for x in pktstorm_link:
+                    list_of_links.append(x)
+                    time.sleep(0.05)
+                    bar()
+            return list_of_links
 
 
 def download_files(link):
@@ -80,5 +71,5 @@ def run(cve_list):
 
 if __name__ == "__main__":
     cve_lists = ["CVE-2021-42013"]
-    run(cve_lists)
-    download_files(cve_lists[0])
+    link = run(cve_lists)
+    download_files(link[0])
