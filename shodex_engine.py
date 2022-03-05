@@ -1,12 +1,11 @@
 import sys
-import pandas as pd
-import modules.exploit_db
+from modules.exploit_db import *
+from modules.pktstorm import *
+from modules.github import *
 from modules.shodan_api import *
 from modules.nmap import *
 from modules.local_cve_parser import *
 from modules.exploit_loader import *
-from modules.pktstorm import * 
-from modules.github import * 
 from tabulate import tabulate
 
 
@@ -28,9 +27,8 @@ def use_recommended_cve(df):
                 print("[!] Error! Invalid input entered!")
             else:
                 search_list = df.iloc[[row_choice]].name.to_string().split(" ")[4]
-                found, exploit_file_path = modules.exploit_db.run([search_list])
-
-                found = False # Comment this out
+                exploit_db = ExploitDb()
+                found, exploit_file_path = exploit_db.run([search_list])
 
                 # If a recommended exploit is found.
                 if found is True:
@@ -44,8 +42,49 @@ def use_recommended_cve(df):
 
                 # If a recommended exploit is not found in exploit-db.
                 else:
-                    # Attempt to find an alternative CVE on Github and Packetstorm. 
-                    alternative_recommended_cve(search_list)
+                    print("\n[!] Unable to find the CVE in exploit-db!")
+                    valid = False
+                    while valid is not True:
+                        choice = input("\n[+] Do you wish to use search for the CVE online? Searching online disables "
+                                       "the autoloader feature. (y/n): ")
+                        if choice.lower() == "y":
+                            print("\n[!] Searching PacketStormSecurity")
+                            pktstorm = Pkstorm()
+                            pktstorm_link = pktstorm.run([search_list])
+                            pktstorm_df = pd.DataFrame({"link": pktstorm_link})
+                            print("\n[!] Searching GitHub")
+                            github = Github()
+                            github_link = github.run([search_list])
+                            github_df = pd.DataFrame({"link": github_link})
+                            online_df = [pktstorm_df, github_df]
+                            result_df = pd.concat(online_df)
+                            print(tabulate(result_df, headers='keys', tablefmt='psql'))
+                            row_choice = input("\t[+] Enter row no: ")
+                            if int(row_choice) not in range(len(result_df)):
+                                print("[!] Error! Invalid input entered!")
+                            else:
+                                choice_link = result_df.iloc[[row_choice]].link[0]
+                                if "packetstormsecurity" in choice_link:
+                                    print("[+] Downloading in progress")
+                                    pktstorm.download_files(choice_link)
+                                    print("[!] Downloading completed, downloaded files are located in the downloads "
+                                          "folder")
+                                    sys.exit(0)
+                                elif "github" in choice_link:
+                                    print("[+] Downloading in progress")
+                                    github.download_files(choice_link)
+                                    print("[!] Downloading completed, downloaded files are located in the downloads "
+                                          "folder")
+                                    sys.exit(0)
+
+                        # The user does not wish to search online.
+                        elif choice.lower() == "n":
+                            return None
+                        # The user supplies an invalid input.
+                        else:
+                            print("[!] Error! Invalid input entered!")
+
+                    return None
 
         # The user does not wish to use a recommended exploit.
         elif choice.lower() == "n":
@@ -55,71 +94,6 @@ def use_recommended_cve(df):
         else:
             print("[!] Error! Invalid input entered!")
 
-
-def alternative_recommended_cve(search_list):
-    """"
-    Recommends an alterantive exploit if exploit-db does not have it. 
-    :param: None.
-    :return: None.
-    """
-    print("\n[!] Unable to find the CVE in exploit-db!")
-    valid = False
-    sub_valid = False 
-    while valid is not True:
-        choice = input("\n[+] Do you wish to use search for the CVE online? Searching online disables "
-                        "the autoloader feature. (y/n): ")
-        if choice.lower() == "y":
-            valid = True 
-
-            # Search packetstorm 
-            print("\n[*] Searching PacketStormSecurity")
-            pkstorm = Pkstorm()
-            pkstorm_link = pkstorm.run([search_list])
-            pkstorm_df = pd.DataFrame({"link": pkstorm_link})
-
-            # Search Github
-            print("\n[*] Searching GitHub")
-            github = Github()
-            github_link = github.run([search_list])
-            github_df = pd.DataFrame({"link": github_link})
-
-            # Tabulate the results into a data frame. 
-            online_df = [pkstorm_df, github_df]
-            result_df = pd.concat(online_df)
-            print("\n[!] Available exploits!")
-            print(tabulate(result_df, headers='keys', tablefmt='psql'))
-
-            while sub_valid is not True:
-                # Prompt the user to enter their choice.
-                row_choice = input("\n[+] Enter row no: ")
-
-                if int(row_choice) not in range(len(result_df)):
-                    print("[!] Error! Invalid input entered!")
-                else:
-                    sub_valid = True
-                    choice_link = result_df.iloc[[row_choice]].link[0]
-                    if "packetstormsecurity" in choice_link:
-                        print("[*] Downloading in progress")
-                        pkstorm.download_files(choice_link)
-                        print("[!] Downloading completed, downloaded files are located in the downloads "
-                                "folder")
-                        sys.exit(0)
-                    elif "github" in choice_link:
-                        print("[*] Downloading in progress")
-                        modules.github.download_files(choice_link)
-                        print("[!] Downloading completed, downloaded files are located in the downloads "
-                                "folder")
-                        sys.exit(0)
-
-        # The user does not wish to search online.
-        elif choice.lower() == "n":
-            valid = True
-
-        # The user supplies an invalid input.
-        else:
-            print("[!] Error! Invalid input entered!")
-
-        return None
 
 def use_local_exploit():
     """"

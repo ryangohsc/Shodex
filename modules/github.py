@@ -3,7 +3,7 @@ import os
 import time
 from requests import get
 from json import loads
-from .misc import * 
+from modules.misc import *
 
 
 # Global variables 
