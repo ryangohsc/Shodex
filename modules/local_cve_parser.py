@@ -123,11 +123,11 @@ class LocalCveParser:
         pattern = r".. [0-9].."
 
         # Ignore if the product and version are empty.
-        if product == "" and version == "":
+        if product == "" and version == "" and product is not None and version is not None:
             pass 
 
         # Search the dataframe if the product and version are not empty.
-        if product != "" and version != "":
+        else:
             product_words = product.split(" ")
             version_words = version.split(" ")
             all_words = product_words + version_words

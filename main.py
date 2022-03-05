@@ -1,8 +1,8 @@
 import argparse
 import cowsay
 import modules.exploit_db
-from shodex_engine import *
 import os
+from shodex_engine import *
 
 
 def splashscreen():
