@@ -55,12 +55,19 @@ class CloneProgress(git.RemoteProgress):
             self._destroy_bar()
 
     def _dispatch_bar(self, title):
-        """Create a new progress bar"""
+        """
+        Create new progress bar
+        :param title:
+        :return: None
+        """
         self.alive_bar_instance = alive_bar(manual=True, title=title)
         self.bar = self.alive_bar_instance.__enter__()
 
     def _destroy_bar(self):
-        """Destroy an existing progress bar"""
+        """
+        Destroy progress bar
+        :return:
+        """
         self.alive_bar_instance.__exit__(None, None, None)
 
 
