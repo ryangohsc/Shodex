@@ -48,34 +48,37 @@ def use_recommended_cve(df):
                         choice = input("\n[+] Do you wish to use search for the CVE online? Searching online disables "
                                        "the autoloader feature. (y/n): ")
                         if choice.lower() == "y":
-                            print("\n[!] Searching PacketStormSecurity")
-                            pktstorm = Pkstorm()
-                            pktstorm_link = pktstorm.run([search_list])
-                            pktstorm_df = pd.DataFrame({"link": pktstorm_link})
-                            print("\n[!] Searching GitHub")
-                            github = Github()
-                            github_link = github.run([search_list])
-                            github_df = pd.DataFrame({"link": github_link})
-                            online_df = [pktstorm_df, github_df]
-                            result_df = pd.concat(online_df)
-                            print(tabulate(result_df, headers='keys', tablefmt='psql'))
-                            row_choice = input("\t[+] Enter row no: ")
-                            if int(row_choice) not in range(len(result_df)):
-                                print("[!] Error! Invalid input entered!")
-                            else:
-                                choice_link = result_df.iloc[[row_choice]].link[0]
-                                if "packetstormsecurity" in choice_link:
-                                    print("[+] Downloading in progress")
-                                    pktstorm.download_files(choice_link)
-                                    print("[!] Downloading completed, downloaded files are located in the downloads "
-                                          "folder")
-                                    sys.exit(0)
-                                elif "github" in choice_link:
-                                    print("[+] Downloading in progress")
-                                    github.download_files(choice_link)
-                                    print("[!] Downloading completed, downloaded files are located in the downloads "
-                                          "folder")
-                                    sys.exit(0)
+                            try:
+                                print("\n[!] Searching PacketStormSecurity")
+                                pktstorm = Pkstorm()
+                                pktstorm_link = pktstorm.run([search_list])
+                                pktstorm_df = pd.DataFrame({"link": pktstorm_link})
+                                print("\n[!] Searching GitHub")
+                                github = Github()
+                                github_link = github.run([search_list])
+                                github_df = pd.DataFrame({"link": github_link})
+                                online_df = [pktstorm_df, github_df]
+                                result_df = pd.concat(online_df)
+                                print(tabulate(result_df, headers='keys', tablefmt='psql'))
+                                row_choice = input("\t[+] Enter row no: ")
+                                if int(row_choice) not in range(len(result_df)):
+                                    print("[!] Error! Invalid input entered!")
+                                else:
+                                    choice_link = result_df.iloc[[row_choice]].link[0]
+                                    if "packetstormsecurity" in choice_link:
+                                        print("[+] Downloading in progress")
+                                        pktstorm.download_files(choice_link)
+                                        print("[!] Downloading completed, downloaded files are located in the downloads"
+                                              " folder")
+                                        sys.exit(0)
+                                    elif "github" in choice_link:
+                                        print("[+] Downloading in progress")
+                                        github.download_files(choice_link)
+                                        print("[!] Downloading completed, downloaded files are located in the downloads"
+                                              " folder")
+                                        sys.exit(0)
+                            except:
+                                print("[!] Failed to search online!")
 
                         # The user does not wish to search online.
                         elif choice.lower() == "n":
