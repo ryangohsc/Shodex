@@ -208,21 +208,18 @@ def offline_mode(speed, target, port_list, cve_list, brute):
     # Brute force module
     if brute is not None:
         if brute == 'SSH' or brute == 'ssh':
-            ssh_thread = threading.Thread(target=ssh_brute.SSH_brute.run(target))
+            ssh_thread = threading.Thread(target=ssh_brute.SSH_brute.run, args=(target,))
             ssh_thread.start()
-            ssh_thread.join()
         if brute == 'Telnet' or brute == 'telnet':
-            telnet_thread = threading.Thread(target=telnet_brute.Telnet_brute.run(target))
+            telnet_thread = threading.Thread(target=telnet_brute.Telnet_brute.run, args=(target,))
             telnet_thread.start()
-            telnet_thread.join()
         if brute == 'HTTP' or brute == 'http':
-            http_thread = threading.Thread(target=http_brute.HTTP_brute.run(target))
+            http_url = 'http://' + target
+            http_thread = threading.Thread(target=http_brute.HTTP_brute.run, args=(http_url,))
             http_thread.start()
-            http_thread.join()
         if brute == 'FTP' or brute == 'ftp':
-            ftp_thread = threading.Thread(target=ftp_brute.FTP_brute.run(target))
+            ftp_thread = threading.Thread(target=ftp_brute.FTP_brute.run, args=(target,))
             ftp_thread.start()
-            ftp_thread.join()
 
     # Check if there are any services and CVEs found for each IP
     exist = False
@@ -261,3 +258,12 @@ def offline_mode(speed, target, port_list, cve_list, brute):
     # Display error message if no recommended CVEs are found.
     if not exist:
         print("[!] No recommended CVEs!")
+
+    if brute == 'SSH' or brute == 'ssh':
+        ssh_thread.join()
+    if brute == 'Telnet' or brute == 'telnet':
+        telnet_thread.join()
+    if brute == 'HTTP' or brute == 'http':
+        http_thread.join()
+    if brute == 'FTP' or brute == 'ftp':
+        ftp_thread.join()
