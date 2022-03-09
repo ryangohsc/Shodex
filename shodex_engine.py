@@ -1,4 +1,9 @@
 import sys
+
+from modules import ssh_brute
+from modules import telnet_brute
+from modules import http_brute
+from modules import ftp_brute
 from modules.exploit_db import *
 from modules.pktstorm import *
 from modules.github import *
@@ -146,7 +151,7 @@ def use_local_exploit():
             print("[!] Error! Invalid input entered!")
 
 
-def online_mode(api_key, ondemand, search_filter, speed):
+def online_mode(api_key, ondemand, search_filter, speed, brute):
     """"
     The online mode which leverages on Shodan to obtain a target or to on-demand scan a target.
     :param: api_key, ondemand, search_filter.
@@ -165,10 +170,10 @@ def online_mode(api_key, ondemand, search_filter, speed):
     else:
         if shodan_app.search_filter():
             target, cve_list, port_list = shodan_app.retrieve_info()
-            offline_mode(speed, target, port_list, cve_list)
+            offline_mode(speed, target, port_list, cve_list, brute)
 
 
-def offline_mode(speed, target, port_list, cve_list):
+def offline_mode(speed, target, port_list, cve_list, brute):
     """"
     The offline mode which uses nmap to scan a target.
     :param: speed, target, port_list.
@@ -199,6 +204,17 @@ def offline_mode(speed, target, port_list, cve_list):
     if service_list == {}:
         print("[!] Error! No hosts are up!")
         return
+
+    # Brute force module
+    if brute is not None:
+        if brute == 'SSH' or brute == 'ssh':
+            ssh_brute.SSH_brute.run(target)
+        if brute == 'Telnet' or brute == 'telnet':
+            telnet_brute.Telnet_brute.run(target)
+        if brute == 'HTTP' or brute == 'http':
+            http_brute.HTTP_brute.run(target)
+        if brute == 'FTP' or brute == 'ftp':
+            ftp_brute.FTP_brute.run(target)
 
     # Check if there are any services and CVEs found for each IP
     exist = False

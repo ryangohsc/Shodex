@@ -1,7 +1,7 @@
 # Python Script for SSH Brute Force
 
 # Importing Modules
-import paramiko, socket, time
+import paramiko, socket, time, os
 from colorama import init, Fore
 
 init()
@@ -40,7 +40,9 @@ class SSH_brute:
 
     def run(hostname):
         # Read the file
-        credlist = open('./wordlists/ssh_wordlist.txt').read().splitlines()
+        parent_dir = os.getcwd()
+        wordlist_path = os.path.join(parent_dir, "data", "wordlists")
+        credlist = open(wordlist_path + '/ssh_wordlist.txt').read().splitlines()
 
         # Start the brute force
         for cred in credlist:

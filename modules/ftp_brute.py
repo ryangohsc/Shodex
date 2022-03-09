@@ -1,7 +1,7 @@
 # Python Script for FTP Brute Force
 
 # Importing modules
-import ftplib
+import ftplib, os
 from colorama import init, Fore
 
 init()
@@ -34,7 +34,9 @@ class FTP_brute:
 
     def run(hostname):
         # Read the file
-        credlist = open('./wordlists/ftp_wordlist.txt').read().splitlines()
+        parent_dir = os.getcwd()
+        wordlist_path = os.path.join(parent_dir, "data", "wordlists")
+        credlist = open(wordlist_path + '/ftp_wordlist.txt').read().splitlines()
 
         # Start the brute force
         for cred in credlist:
