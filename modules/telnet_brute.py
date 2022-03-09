@@ -50,7 +50,7 @@ class Telnet_brute:
 
     def run(hostname):
         # Read the file
-        credlist = open('./wordlists/telnet_wordlists.txt').read().splitlines()
+        credlist = open('./wordlists/telnet_wordlist.txt').read().splitlines()
 
         # Start the brute force
         for cred in credlist:
