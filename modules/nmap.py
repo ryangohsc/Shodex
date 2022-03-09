@@ -1,4 +1,9 @@
 import nmap
+import numpy as np
+import pandas as pd
+import alive_progress
+from tabulate import tabulate
+import time
 
 
 class Nmap:
@@ -17,67 +22,49 @@ class Nmap:
         :return: cve_info.cve_List
         """
         # Define the port range to scan.
-        nmScan = nmap.PortScanner()
+        scanner = nmap.PortScanner()
+        lst = []
+        cve_info_list = []
         cve_info = {}
-        if speed == "through":
-            # port_range = "0-65535"
-            port_range = "0-100"
-        else:
-            if port_list:
-                end = port_list[-1]
-                port_range = "0-100"
-                # port_range = "%s-%s" % (0, end)
+        if not port_list:
+            if speed == "fast":
+                port_list = [i for i in range(0, 1024)]
             else:
-                # port_range = "0-10000"
-                port_range = "0-100"
-        results = nmScan.scan(ip, port_range)
+                port_list = [i for i in range(0, 65535)]
 
-        # Prints the summary details.
-        print("\n\tSummary")
-        print('\tCommand line: %s' % results['nmap']['command_line'])
-        print('\tTime Stamp: %s' % results['nmap']['scanstats']['timestr'])
-        print('\tNo. of hosts up: %s' % results['nmap']['scanstats']['uphosts'])
-        print('\tNo. of hosts down: %s' % results['nmap']['scanstats']['downhosts'])
-        print('\tTotal No. of hosts: %s\n' % results['nmap']['scanstats']['totalhosts'])
-        total_hosts = results['nmap']['scanstats']['totalhosts']
-        down_hosts = results['nmap']['scanstats']['downhosts']
-
-        # Prints the technical details of each port.
-        keys = results['scan'].keys()
-
-        # print(results['scan']) # Keep this for debugging purposes
-        count = 1
-        for ip in keys:
-            temp = []
-            print("\tTarget %s" % count)
-            print('\tVendor: %s' % results['scan'][ip]['vendor'])
-            try:
-                sub_keys = results['scan'][ip]['tcp'].keys()
-                for port in sub_keys:
-                    print('\tPort: %s' % port)
-
-                    state = results['scan'][ip]['tcp'][port]['state']
-                    print('\tState: %s' % state)
-
-                    name = results['scan'][ip]['tcp'][port]['name']
-                    print('\tName: %s' % name)
-
-                    product = results['scan'][ip]['tcp'][port]['product']
-                    print('\tProduct: %s' % product)
-
-                    version = results['scan'][ip]['tcp'][port]['version']
-                    print('\tVersion: %s' % version)
-
-                    extra_info = results['scan'][ip]['tcp'][port]['extrainfo']
-                    print('\tExtra Info: %s\n' % extra_info)
-
-                    temp.append({'port': port, 'name': name, 'product': product, 'version': version})
-
-                    count += 1
-                cve_info[ip] = temp
-            except KeyError:
-                pass
-        return cve_info, total_hosts, down_hosts
+        # Scan the individual ports.
+        with alive_progress.alive_bar(len(port_list)) as bar:
+            for port in port_list:
+                result = scanner.scan(ip, str(port))
+                try:
+                    state = result['scan'][ip]['tcp'][int(port)]['state']
+                except KeyError:
+                    state = "" 
+                try:
+                    name = result['scan'][ip]['tcp'][int(port)]['name']
+                except KeyError:
+                    name = "" 
+                try:
+                    product = result['scan'][ip]['tcp'][int(port)]['product']
+                except KeyError:
+                    product = "" 
+                try:
+                    version = result['scan'][ip]['tcp'][int(port)]['version']
+                except KeyError:
+                    version = ""
+                try: 
+                    extra_info = result['scan'][ip]['tcp'][int(port)]['extrainfo']
+                except KeyError:
+                    extra_info = "" 
+                lst.append([port, state, name, product, version, extra_info])
+                cve_info_list.append({'port': port, 'name': name, 'product': product, 'version': version})
+                cve_info[ip] = cve_info_list
+                time.sleep(0.005)
+                bar()
+        print("\n[!] Open Ports")
+        df = pd.DataFrame(np.array(lst, dtype=object), columns=['port', 'state', 'name', 'product', 'version', 'extra_info']).astype(str)
+        print(tabulate(df, headers='keys', tablefmt='psql'))
+        return cve_info
 
     def run(self, ip, speed, port_list):
         """"
