@@ -216,8 +216,7 @@ def offline_mode(speed, target, port_list, cve_list, brute):
             telnet_thread.start()
             telnet_thread.join()
         if brute == 'HTTP' or brute == 'http':
-            http_target = 'http://' + target
-            http_thread = threading.Thread(target=http_brute.HTTP_brute.run(http_target))
+            http_thread = threading.Thread(target=http_brute.HTTP_brute.run(target))
             http_thread.start()
             http_thread.join()
         if brute == 'FTP' or brute == 'ftp':
