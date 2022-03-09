@@ -1,0 +1,16 @@
+password:password
+administrator:administrator
+admin:admin
+admin:iloveyou
+admin:letmein
+welcome:welcome
+admin:password
+:password
+:passw0rd
+:1234
+user:user
+:12345
+root:1234
+admin:
+admin:barney
+admin:5215
