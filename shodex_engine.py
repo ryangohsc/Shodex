@@ -259,11 +259,13 @@ def offline_mode(speed, target, port_list, cve_list, brute):
     if not exist:
         print("[!] No recommended CVEs!")
 
-    if brute == 'SSH' or brute == 'ssh':
-        ssh_thread.join()
-    if brute == 'Telnet' or brute == 'telnet':
-        telnet_thread.join()
-    if brute == 'HTTP' or brute == 'http':
-        http_thread.join()
-    if brute == 'FTP' or brute == 'ftp':
-        ftp_thread.join()
+    # Close the respective threads if brute force module is loaded.
+    if brute is not None:
+        if brute == 'SSH' or brute == 'ssh':
+            ssh_thread.join()
+        if brute == 'Telnet' or brute == 'telnet':
+            telnet_thread.join()
+        if brute == 'HTTP' or brute == 'http':
+            http_thread.join()
+        if brute == 'FTP' or brute == 'ftp':
+            ftp_thread.join()
