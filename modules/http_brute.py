@@ -1,7 +1,7 @@
 # Python Script for HTTP Brute Force
 
 # Importing Modules
-import requests
+import requests, os
 from colorama import init, Fore
 
 init()
@@ -22,7 +22,9 @@ class HTTP_brute:
 
     def run(hostname):
         # Read the file
-        credlist = open('./wordlists/http_wordlist.txt').read().splitlines()
+        parent_dir = os.getcwd()
+        wordlist_path = os.path.join(parent_dir, "data", "wordlists")
+        credlist = open(wordlist_path + '/http_wordlist.txt').read().splitlines()
 
         # Start the brute force
         for cred in credlist:

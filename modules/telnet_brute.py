@@ -1,7 +1,7 @@
 # Python Script for Telnet Brute Force
 
 # Importing Module
-import telnetlib, socket
+import telnetlib, socket, os
 from colorama import init, Fore
 
 init()
@@ -50,7 +50,9 @@ class Telnet_brute:
 
     def run(hostname):
         # Read the file
-        credlist = open('./wordlists/telnet_wordlist.txt').read().splitlines()
+        parent_dir = os.getcwd()
+        wordlist_path = os.path.join(parent_dir, "data", "wordlists")
+        credlist = open(wordlist_path + '/telnet_wordlist.txt').read().splitlines()
 
         # Start the brute force
         for cred in credlist:
