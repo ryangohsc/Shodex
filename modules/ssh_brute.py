@@ -32,7 +32,7 @@ class SSH_brute:
             print(f"{BLUE}[*] Quota exceeded, retrying with delay...{RESET}")
             # Sleep for a minute
             time.sleep(60)
-            return sshbrute(hostname, username, password)
+            return SSH_brute.sshbrute(hostname, username, password)
         else:
             # Connection has been established
             print(f"{GREEN}[+] Found combo:\n\tHostname: {hostname}\n\tUsername: {username}\n\tPassword: {password}{RESET}")
