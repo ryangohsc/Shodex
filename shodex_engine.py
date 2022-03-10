@@ -207,6 +207,7 @@ def offline_mode(speed, target, port_list, cve_list, brute):
 
     # Brute force module
     if brute is not None:
+        print("\n[*] Executing brute force module!")
         if brute == 'SSH' or brute == 'ssh':
             ssh_thread = threading.Thread(target=ssh_brute.SSH_brute.run, args=(target,))
             ssh_thread.start()
