@@ -29,7 +29,7 @@ class FTP_brute:
                 pass
             else:
                 # Connection has been established
-                print(f"{GREEN}[+] Found credentials:\n\tHostname: {hostname}\n\tUsername: {username}\n\tPassword: {password}")
+                print(f"{GREEN}[+] Found credentials:\n\tHostname: {hostname}\n\tUsername: {username}\n\tPassword: {password}{RESET}")
                 return True
 
     def run(hostname):
