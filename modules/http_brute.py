@@ -21,12 +21,12 @@ class HTTPBrute(threading.Thread):
         check = requests.get(hostname, auth=HTTPBasicAuth(username, password))
         r = check.status_code
         if r == 200:
-            print(
-                f"{GREEN}[HTTP] Found combo:\n\tHostname: {hostname}\n\tUsername: {username}\n\tPassword: {password}{RESET}")
+            print(f"{GREEN}\n[HTTP] Found combo:\n\tHostname: {hostname}\n\tUsername: {username}\n\tPassword: {password}{RESET}")
             return True
 
         elif r == 401:
-            print(f"[HTTP] Invalid credentials for {username}:{password}")
+            # print(f"\n[HTTP] Invalid credentials for {username}:{password}")
+            pass
 
     def run(self):
         # Read the file
