@@ -26,8 +26,8 @@ def init_arg_parser():
     parser.add_argument("--ondemand", help="Shodan on-demand scan a target.", required=False)
     parser.add_argument("--target", help="Target (e.g. 192.168.1.2).", required=False)
     parser.add_argument("--speed", help="Speed of the offline scan (e.g. quick or through).", required=False)
-    parser.add_argument("--brute", help="Brute force module (e.g. ssh, http).", required=False)
-    parser.add_argument("--update", help="Update the local CVE database.", required=False, action='store_true')
+    parser.add_argument("--brute", help="Brute force module", required=False, action="store_true")
+    parser.add_argument("--update", help="Update the local CVE database.", required=False, action="store_true")
     args = parser.parse_args()
     return args
 

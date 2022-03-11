@@ -1,9 +1,3 @@
-import sys, threading
-
-from modules import ssh_brute
-from modules import telnet_brute
-from modules import http_brute
-from modules import ftp_brute
 from modules.exploit_db import *
 from modules.pktstorm import *
 from modules.github import *
@@ -12,6 +6,10 @@ from modules.nmap import *
 from modules.local_cve_parser import *
 from modules.exploit_loader import *
 from tabulate import tabulate
+from modules.ftp_brute import FTPBrute
+from modules.ssh_brute import SSHBrute
+from modules.telnet_brute import TelnetBrute
+from modules.http_brute import HTTPBrute
 
 
 def use_recommended_cve(df):
@@ -205,22 +203,35 @@ def offline_mode(speed, target, port_list, cve_list, brute):
         print("[!] Error! No hosts are up!")
         return
 
-    # Brute force module
-    if brute is not None:
-        print("\n[*] Executing brute force module!")
-        if brute.lower() == "ssh":
-            ssh_thread = threading.Thread(target=ssh_brute.SSH_brute.run, args=(target,))
-            ssh_thread.start()
-        if brute.lower() == "telnet":
-            telnet_thread = threading.Thread(target=telnet_brute.Telnet_brute.run, args=(target,))
-            telnet_thread.start()
-        if brute.lower() == "http":
-            http_url = 'http://' + target
-            http_thread = threading.Thread(target=http_brute.HTTP_brute.run, args=(http_url,))
-            http_thread.start()
-        if brute.lower() == "ftp":
-            ftp_thread = threading.Thread(target=ftp_brute.FTP_brute.run, args=(target,))
-            ftp_thread.start()
+    # Mapping Nmap results with brute force modules
+    if brute:
+        ftp_module = False
+        ssh_module = False
+        telnet_module = False
+        http_module = False
+        ip = list(service_list.keys())[0]
+        for item in service_list[ip]:
+            if item["port"] == "21" and item["state"] == "open":
+                print("\n[*] Executing FTP brute force module!")
+                ftp_module = True
+                ftp_thread = FTPBrute(target)
+                ftp_thread.start()
+            if item["port"] == "22" and item["state"] == "open":
+                print("\n[*] Executing SSH brute force module!")
+                ssh_module = True
+                ssh_thread = SSHBrute(target)
+                ssh_thread.start()
+            if item["port"] == "23" and item["state"] == "open":
+                print("\n[*] Executing Telnet brute force module!")
+                telnet_module = True
+                telnet_thread = TelnetBrute(target)
+                telnet_thread.start()
+            if item["port"] == "80" and item["state"] == "open":
+                print("\n[*] Executing HTTP brute force module!")
+                http_module = True
+                http_url = "http://" + target
+                http_thread = HTTPBrute(http_url)
+                http_thread.start()
 
     # Check if there are any services and CVEs found for each IP
     exist = False
@@ -260,13 +271,13 @@ def offline_mode(speed, target, port_list, cve_list, brute):
     if not exist:
         print("[!] No recommended CVEs!")
 
-    # Close the respective threads if brute force module is loaded.
-    if brute is not None:
-        if brute.lower() == "ssh":
-            ssh_thread.join()
-        if brute.lower() == "telnet":
-            telnet_thread.join()
-        if brute.lower() == "http":
-            http_thread.join()
-        if brute.lower() == "ftp":
+    # Wait for the respective brute force threads.
+    if brute:
+        if ftp_module:
             ftp_thread.join()
+        if ssh_module:
+            ssh_thread.join()
+        if telnet_module:
+            telnet_thread.join()
+        if http_module:
+            http_thread.join()
