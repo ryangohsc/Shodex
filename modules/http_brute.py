@@ -9,8 +9,9 @@ init()
 GREEN = Fore.GREEN
 RESET = Fore.RESET
 
+
 class HTTP_brute:
-    def httpbrute(hostname, username, password):
+    def httpbrute(self, hostname, username, password):
         check = requests.get(hostname, auth=HTTPBasicAuth(username, password))
         r = check.status_code
         if r == 200:
@@ -21,16 +22,16 @@ class HTTP_brute:
         elif r == 401:
             print(f"[!] Invalid credentials for {username}:{password}")
 
-    def run(hostname):
+    def run(self, hostname):
         # Read the file
         parent_dir = os.getcwd()
-        wordlist_path = os.path.join(parent_dir, "data", "wordlists")
-        credlist = open(wordlist_path + '/http_wordlist.txt').read().splitlines()
+        wordlist_path = os.path.join(parent_dir, "data", "wordlists", "http_wordlist.txt")
+        credlist = open(wordlist_path).read().splitlines()
 
         # Start the brute force
         for cred in credlist:
             username = cred.split(':')[0]
             password = cred.split(':')[1]
 
-            if HTTP_brute.httpbrute(hostname, username, password):
+            if self.httpbrute(hostname, username, password):
                 break

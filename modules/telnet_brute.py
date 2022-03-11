@@ -8,8 +8,9 @@ init()
 GREEN = Fore.GREEN
 RESET = Fore.RESET
 
+
 class Telnet_brute:
-    def telnetbrute(hostname, username, password):
+    def telnetbrute(self, hostname, username, password):
         # Initializing Telnet Client
         client = telnetlib.Telnet(hostname)
 
@@ -48,16 +49,16 @@ class Telnet_brute:
             client.close()
             return False
 
-    def run(hostname):
+    def run(self, hostname):
         # Read the file
         parent_dir = os.getcwd()
-        wordlist_path = os.path.join(parent_dir, "data", "wordlists")
-        credlist = open(wordlist_path + '/telnet_wordlist.txt').read().splitlines()
+        wordlist_path = os.path.join(parent_dir, "data", "wordlists", "telnet_wordlist.txt")
+        credlist = open(wordlist_path).read().splitlines()
 
         # Start the brute force
         for cred in credlist:
             username = cred.split(':')[0]
             password = cred.split(':')[1]
 
-            if Telnet_brute.telnetbrute(hostname, username, password):
+            if self.telnetbrute(hostname, username, password):
                 break

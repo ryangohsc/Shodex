@@ -208,17 +208,17 @@ def offline_mode(speed, target, port_list, cve_list, brute):
     # Brute force module
     if brute is not None:
         print("\n[*] Executing brute force module!")
-        if brute == 'SSH' or brute == 'ssh':
+        if brute.lower() == "ssh":
             ssh_thread = threading.Thread(target=ssh_brute.SSH_brute.run, args=(target,))
             ssh_thread.start()
-        if brute == 'Telnet' or brute == 'telnet':
+        if brute.lower() == "telnet":
             telnet_thread = threading.Thread(target=telnet_brute.Telnet_brute.run, args=(target,))
             telnet_thread.start()
-        if brute == 'HTTP' or brute == 'http':
+        if brute.lower() == "http":
             http_url = 'http://' + target
             http_thread = threading.Thread(target=http_brute.HTTP_brute.run, args=(http_url,))
             http_thread.start()
-        if brute == 'FTP' or brute == 'ftp':
+        if brute.lower() == "ftp":
             ftp_thread = threading.Thread(target=ftp_brute.FTP_brute.run, args=(target,))
             ftp_thread.start()
 
@@ -262,11 +262,11 @@ def offline_mode(speed, target, port_list, cve_list, brute):
 
     # Close the respective threads if brute force module is loaded.
     if brute is not None:
-        if brute == 'SSH' or brute == 'ssh':
+        if brute.lower() == "ssh":
             ssh_thread.join()
-        if brute == 'Telnet' or brute == 'telnet':
+        if brute.lower() == "telnet":
             telnet_thread.join()
-        if brute == 'HTTP' or brute == 'http':
+        if brute.lower() == "http":
             http_thread.join()
-        if brute == 'FTP' or brute == 'ftp':
+        if brute.lower() == "ftp":
             ftp_thread.join()
