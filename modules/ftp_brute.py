@@ -30,12 +30,12 @@ class FTPBrute(threading.Thread):
             client.login(username, password)
         except ftplib.error_perm:
             # Incorrect credentials
-            print(f"[FTP] Invalid credentials for {username}:{password}")
+            # print(f"\n[FTP] Invalid credentials for {username}:{password}")
             pass
         else:
             # Connection has been established
             print(
-                f"{GREEN}[FTP] Found credentials:\n\tHostname: {hostname}\n\tUsername: {username}\n\tPassword: {password}{RESET}")
+                f"{GREEN}\n[FTP] Found credentials:\n\tHostname: {hostname}\n\tUsername: {username}\n\tPassword: {password}{RESET}")
             return True
 
     def run(self):
