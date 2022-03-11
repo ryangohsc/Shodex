@@ -57,7 +57,7 @@ class Nmap:
                 except KeyError:
                     extra_info = "" 
                 lst.append([port, state, name, product, version, extra_info])
-                cve_info_list.append({'port': port, 'name': name, 'product': product, 'version': version})
+                cve_info_list.append({'port': port, 'name': name, 'product': product, 'version': version, 'state': state})
                 cve_info[ip] = cve_info_list
                 time.sleep(0.005)
                 bar()

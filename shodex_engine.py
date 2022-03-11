@@ -1,13 +1,15 @@
-import sys
-import pandas as pd
-import modules.exploit_db
+from modules.exploit_db import *
+from modules.pktstorm import *
+from modules.github import *
 from modules.shodan_api import *
 from modules.nmap import *
 from modules.local_cve_parser import *
 from modules.exploit_loader import *
-from modules.pktstorm import * 
-from modules.github import * 
 from tabulate import tabulate
+from modules.ftp_brute import FTPBrute
+from modules.ssh_brute import SSHBrute
+from modules.telnet_brute import TelnetBrute
+from modules.http_brute import HTTPBrute
 
 
 def use_recommended_cve(df):
@@ -28,9 +30,8 @@ def use_recommended_cve(df):
                 print("[!] Error! Invalid input entered!")
             else:
                 search_list = df.iloc[[row_choice]].name.to_string().split(" ")[4]
-                found, exploit_file_path = modules.exploit_db.run([search_list])
-
-                found = False # Comment this out
+                exploit_db = ExploitDb()
+                found, exploit_file_path = exploit_db.run([search_list])
 
                 # If a recommended exploit is found.
                 if found is True:
@@ -44,8 +45,52 @@ def use_recommended_cve(df):
 
                 # If a recommended exploit is not found in exploit-db.
                 else:
-                    # Attempt to find an alternative CVE on Github and Packetstorm. 
-                    alternative_recommended_cve(search_list)
+                    print("\n[!] Unable to find the CVE in exploit-db!")
+                    valid = False
+                    while valid is not True:
+                        choice = input("\n[+] Do you wish to use search for the CVE online? Searching online disables "
+                                       "the autoloader feature. (y/n): ")
+                        if choice.lower() == "y":
+                            try:
+                                print("\n[!] Searching PacketStormSecurity")
+                                pktstorm = Pkstorm()
+                                pktstorm_link = pktstorm.run([search_list])
+                                pktstorm_df = pd.DataFrame({"link": pktstorm_link})
+                                print("\n[!] Searching GitHub")
+                                github = Github()
+                                github_link = github.run([search_list])
+                                github_df = pd.DataFrame({"link": github_link})
+                                online_df = [pktstorm_df, github_df]
+                                result_df = pd.concat(online_df)
+                                print(tabulate(result_df, headers='keys', tablefmt='psql'))
+                                row_choice = input("\t[+] Enter row no: ")
+                                if int(row_choice) not in range(len(result_df)):
+                                    print("[!] Error! Invalid input entered!")
+                                else:
+                                    choice_link = result_df.iloc[[row_choice]].link[0]
+                                    if "packetstormsecurity" in choice_link:
+                                        print("[+] Downloading in progress")
+                                        pktstorm.download_files(choice_link)
+                                        print("[!] Downloading completed, downloaded files are located in the downloads"
+                                              " folder")
+                                        sys.exit(0)
+                                    elif "github" in choice_link:
+                                        print("[+] Downloading in progress")
+                                        github.download_files(choice_link)
+                                        print("[!] Downloading completed, downloaded files are located in the downloads"
+                                              " folder")
+                                        sys.exit(0)
+                            except:
+                                print("[!] Failed to search online!")
+
+                        # The user does not wish to search online.
+                        elif choice.lower() == "n":
+                            return None
+                        # The user supplies an invalid input.
+                        else:
+                            print("[!] Error! Invalid input entered!")
+
+                    return None
 
         # The user does not wish to use a recommended exploit.
         elif choice.lower() == "n":
@@ -55,71 +100,6 @@ def use_recommended_cve(df):
         else:
             print("[!] Error! Invalid input entered!")
 
-
-def alternative_recommended_cve(search_list):
-    """"
-    Recommends an alterantive exploit if exploit-db does not have it. 
-    :param: None.
-    :return: None.
-    """
-    print("\n[!] Unable to find the CVE in exploit-db!")
-    valid = False
-    sub_valid = False 
-    while valid is not True:
-        choice = input("\n[+] Do you wish to use search for the CVE online? Searching online disables "
-                        "the autoloader feature. (y/n): ")
-        if choice.lower() == "y":
-            valid = True 
-
-            # Search packetstorm 
-            print("\n[*] Searching PacketStormSecurity")
-            pkstorm = Pkstorm()
-            pkstorm_link = pkstorm.run([search_list])
-            pkstorm_df = pd.DataFrame({"link": pkstorm_link})
-
-            # Search Github
-            print("\n[*] Searching GitHub")
-            github = Github()
-            github_link = github.run([search_list])
-            github_df = pd.DataFrame({"link": github_link})
-
-            # Tabulate the results into a data frame. 
-            online_df = [pkstorm_df, github_df]
-            result_df = pd.concat(online_df)
-            print("\n[!] Available exploits!")
-            print(tabulate(result_df, headers='keys', tablefmt='psql'))
-
-            while sub_valid is not True:
-                # Prompt the user to enter their choice.
-                row_choice = input("\n[+] Enter row no: ")
-
-                if int(row_choice) not in range(len(result_df)):
-                    print("[!] Error! Invalid input entered!")
-                else:
-                    sub_valid = True
-                    choice_link = result_df.iloc[[row_choice]].link[0]
-                    if "packetstormsecurity" in choice_link:
-                        print("[*] Downloading in progress")
-                        pkstorm.download_files(choice_link)
-                        print("[!] Downloading completed, downloaded files are located in the downloads "
-                                "folder")
-                        sys.exit(0)
-                    elif "github" in choice_link:
-                        print("[*] Downloading in progress")
-                        modules.github.download_files(choice_link)
-                        print("[!] Downloading completed, downloaded files are located in the downloads "
-                                "folder")
-                        sys.exit(0)
-
-        # The user does not wish to search online.
-        elif choice.lower() == "n":
-            valid = True
-
-        # The user supplies an invalid input.
-        else:
-            print("[!] Error! Invalid input entered!")
-
-        return None
 
 def use_local_exploit():
     """"
@@ -169,7 +149,7 @@ def use_local_exploit():
             print("[!] Error! Invalid input entered!")
 
 
-def online_mode(api_key, ondemand, search_filter, speed):
+def online_mode(api_key, ondemand, search_filter, speed, brute):
     """"
     The online mode which leverages on Shodan to obtain a target or to on-demand scan a target.
     :param: api_key, ondemand, search_filter.
@@ -188,10 +168,10 @@ def online_mode(api_key, ondemand, search_filter, speed):
     else:
         if shodan_app.search_filter():
             target, cve_list, port_list = shodan_app.retrieve_info()
-            offline_mode(speed, target, port_list, cve_list)
+            offline_mode(speed, target, port_list, cve_list, brute)
 
 
-def offline_mode(speed, target, port_list, cve_list):
+def offline_mode(speed, target, port_list, cve_list, brute):
     """"
     The offline mode which uses nmap to scan a target.
     :param: speed, target, port_list.
@@ -222,6 +202,36 @@ def offline_mode(speed, target, port_list, cve_list):
     if service_list == {}:
         print("[!] Error! No hosts are up!")
         return
+
+    # Mapping Nmap results with brute force modules
+    if brute:
+        ftp_module = False
+        ssh_module = False
+        telnet_module = False
+        http_module = False
+        ip = list(service_list.keys())[0]
+        for item in service_list[ip]:
+            if item["port"] == "21" and item["state"] == "open":
+                print("\n[*] Executing FTP brute force module!")
+                ftp_module = True
+                ftp_thread = FTPBrute(target)
+                ftp_thread.start()
+            if item["port"] == "22" and item["state"] == "open":
+                print("\n[*] Executing SSH brute force module!")
+                ssh_module = True
+                ssh_thread = SSHBrute(target)
+                ssh_thread.start()
+            if item["port"] == "23" and item["state"] == "open":
+                print("\n[*] Executing Telnet brute force module!")
+                telnet_module = True
+                telnet_thread = TelnetBrute(target)
+                telnet_thread.start()
+            if item["port"] == "80" and item["state"] == "open":
+                print("\n[*] Executing HTTP brute force module!")
+                http_module = True
+                http_url = "http://" + target
+                http_thread = HTTPBrute(http_url)
+                http_thread.start()
 
     # Check if there are any services and CVEs found for each IP
     exist = False
@@ -260,3 +270,14 @@ def offline_mode(speed, target, port_list, cve_list):
     # Display error message if no recommended CVEs are found.
     if not exist:
         print("[!] No recommended CVEs!")
+
+    # Wait for the respective brute force threads.
+    if brute:
+        if ftp_module:
+            ftp_thread.join()
+        if ssh_module:
+            ssh_thread.join()
+        if telnet_module:
+            telnet_thread.join()
+        if http_module:
+            http_thread.join()

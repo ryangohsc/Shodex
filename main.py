@@ -1,8 +1,7 @@
 import argparse
 import cowsay
-import modules.exploit_db
-import os
 from shodex_engine import *
+import os
 
 
 def splashscreen():
@@ -27,7 +26,8 @@ def init_arg_parser():
     parser.add_argument("--ondemand", help="Shodan on-demand scan a target.", required=False)
     parser.add_argument("--target", help="Target (e.g. 192.168.1.2).", required=False)
     parser.add_argument("--speed", help="Speed of the offline scan (e.g. quick or through).", required=False)
-    parser.add_argument("--update", help="Update the local CVE database.", required=False, action='store_true')
+    parser.add_argument("--brute", help="Brute force module", required=False, action="store_true")
+    parser.add_argument("--update", help="Update the local CVE database.", required=False, action="store_true")
     args = parser.parse_args()
     return args
 
@@ -48,6 +48,7 @@ def main():
     api_key = args.api_key
     search_filter = args.filter
     ondemand = args.ondemand
+    brute = args.brute
     update = args.update
 
     # Check arguments.
@@ -75,16 +76,17 @@ def main():
     if update:
         cve_parser = LocalCveParser()
         cve_parser.check_last_update()
-        modules.exploit_db.force_update()
+        exploit_db = ExploitDb()
+        exploit_db.force_update()
         exit()
 
     # Initiate online Mode. 
     if api_key is not None:
-        online_mode(api_key, ondemand, search_filter, speed)
+        online_mode(api_key, ondemand, search_filter, speed, brute)
 
     # Initiate offline mode.
     else:
-        offline_mode(speed, target, [], [])
+        offline_mode(speed, target, [], [], brute)
     print("\n[!] Exiting program!")
     exit() 
 
