@@ -41,8 +41,8 @@ class SSH_brute:
     def run(hostname):
         # Read the file
         parent_dir = os.getcwd()
-        wordlist_path = os.path.join(parent_dir, "data", "wordlists")
-        credlist = open(wordlist_path + '/ssh_wordlist.txt').read().splitlines()
+        wordlist_path = os.path.join(parent_dir, "data", "wordlists", "ssh_wordlist.txt")
+        credlist = open(wordlist_path).read().splitlines()
 
         # Start the brute force
         for cred in credlist:

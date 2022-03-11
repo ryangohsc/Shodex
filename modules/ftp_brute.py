@@ -29,14 +29,14 @@ class FTP_brute:
                 pass
             else:
                 # Connection has been established
-                print(f"{GREEN}[+] Found credentials:\n\tHostname: {hostname}\n\tUsername: {username}\n\tPassword: {password}")
+                print(f"{GREEN}[+] Found credentials:\n\tHostname: {hostname}\n\tUsername: {username}\n\tPassword: {password}{RESET}")
                 return True
 
     def run(hostname):
         # Read the file
         parent_dir = os.getcwd()
-        wordlist_path = os.path.join(parent_dir, "data", "wordlists")
-        credlist = open(wordlist_path + '/ftp_wordlist.txt').read().splitlines()
+        wordlist_path = os.path.join(parent_dir, "data", "wordlists", "ftp_wordlist.txt")
+        credlist = open(wordlist_path).read().splitlines()
 
         # Start the brute force
         for cred in credlist:
