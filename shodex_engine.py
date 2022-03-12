@@ -211,22 +211,22 @@ def offline_mode(speed, target, port_list, cve_list, brute):
         http_module = False
         ip = list(service_list.keys())[0]
         for item in service_list[ip]:
-            if item["port"] == "21" and item["state"] == "open":
+            if str(item["port"]) == "21" and item["state"] == "open":
                 print("\n[*] Executing FTP brute force module!")
                 ftp_module = True
                 ftp_thread = FTPBrute(target)
                 ftp_thread.start()
-            if item["port"] == "22" and item["state"] == "open":
+            if str(item["port"]) == "22" and item["state"] == "open":
                 print("\n[*] Executing SSH brute force module!")
                 ssh_module = True
                 ssh_thread = SSHBrute(target)
                 ssh_thread.start()
-            if item["port"] == "23" and item["state"] == "open":
+            if str(item["port"]) == "23" and item["state"] == "open":
                 print("\n[*] Executing Telnet brute force module!")
                 telnet_module = True
                 telnet_thread = TelnetBrute(target)
                 telnet_thread.start()
-            if item["port"] == "80" and item["state"] == "open":
+            if str(item["port"]) == "80" and item["state"] == "open":
                 print("\n[*] Executing HTTP brute force module!")
                 http_module = True
                 http_url = "http://" + target
@@ -258,6 +258,8 @@ def offline_mode(speed, target, port_list, cve_list, brute):
 
                     # Ask the user if they want to use the recommended exploit.
                     recommended_cve = use_recommended_cve(df)
+                    if recommended_cve:
+                        exist = True
 
                     # Ask the user if they want to use a local exploit.
                     if not recommended_cve:
@@ -274,10 +276,18 @@ def offline_mode(speed, target, port_list, cve_list, brute):
     # Wait for the respective brute force threads.
     if brute:
         if ftp_module:
+            if ftp_thread.is_alive():
+                print("\n[*] FTP brute force module is still executing!")
             ftp_thread.join()
         if ssh_module:
+            if ssh_thread.is_alive():
+                print("\n[*] SSH brute force module is still executing!")
             ssh_thread.join()
         if telnet_module:
+            if telnet_thread.is_alive():
+                print("\n[*] TELNET brute force module is still executing!")
             telnet_thread.join()
         if http_module:
+            if http_thread.is_alive():
+                print("\n[*] HTTP brute force module is still executing!")
             http_thread.join()

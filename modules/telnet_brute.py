@@ -48,10 +48,11 @@ class TelnetBrute(threading.Thread):
                 print("Error occurred")
 
             if i == 1:
-                print(f"{GREEN}[TELNET] Found combo:\n\tHostname: {hostname}\n\tUsername: {username}\n\tPassword: {password}{RESET}")
+                print(f"{GREEN}\n[TELNET] Found combo:\n\tHostname: {hostname}\n\tUsername: {username}\n\tPassword: {password}{RESET}")
                 return True
             else:
-                print(f"[TELNET] Invalid credentials for {username}:{password}")
+                # print(f"\n[TELNET] Invalid credentials for {username}:{password}")
+                pass
 
             client.close()
             return False
