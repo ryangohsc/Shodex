@@ -21,13 +21,13 @@ def use_recommended_cve(df):
     valid = False
     while valid is not True:
         # Prompt the user if they wish to use a recommended exploit.
-        choice = input("\n[+] Do you wish to use a recommended CVE (y/n): ")
+        choice = input(print_yellow("\n[+] Do you wish to use a recommended CVE (y/n): "))
 
         # The user does not wish to use a recommended exploit.
         if choice.lower() == "y":
-            row_choice = input("\t[+] Enter row no: ")
+            row_choice = input(print_yellow("\t[+] Enter row no: "))
             if int(row_choice) not in range(len(df)):
-                print("[!] Error! Invalid input entered!")
+                print(print_red("[!] Error! Invalid input entered!"))
             else:
                 search_list = df.iloc[[row_choice]].name.to_string().split(" ")[4]
                 exploit_db = ExploitDb()
@@ -45,50 +45,51 @@ def use_recommended_cve(df):
 
                 # If a recommended exploit is not found in exploit-db.
                 else:
-                    print("\n[!] Unable to find the CVE in exploit-db!")
+                    print(print_red("\n[!] Unable to find the CVE in exploit-db!"))
                     valid = False
                     while valid is not True:
-                        choice = input("\n[+] Do you wish to use search for the CVE online? Searching online disables "
-                                       "the autoloader feature. (y/n): ")
+                        choice = input(print_yellow("\n[+] Do you wish to use search for the CVE online? Searching "
+                                       "online disables the autoloader feature. (y/n): "))
                         if choice.lower() == "y":
                             try:
-                                print("\n[!] Searching PacketStormSecurity")
+                                print(print_yellow("\n[!] Searching PacketStormSecurity"))
                                 pktstorm = Pkstorm()
                                 pktstorm_link = pktstorm.run([search_list])
                                 pktstorm_df = pd.DataFrame({"link": pktstorm_link})
-                                print("\n[!] Searching GitHub")
+                                print(print_yellow("\n[!] Searching GitHub"))
                                 github = Github()
                                 github_link = github.run([search_list])
                                 github_df = pd.DataFrame({"link": github_link})
                                 online_df = [pktstorm_df, github_df]
                                 result_df = pd.concat(online_df)
-                                print(tabulate(result_df, headers='keys', tablefmt='psql'))
-                                row_choice = input("\t[+] Enter row no: ")
+                                print(print_green("\n[!] Available exploits!"))
+                                print(print_green(tabulate(result_df, headers='keys', tablefmt='psql')))
+                                row_choice = input(print_yellow("\t[+] Enter row no: "))
                                 if int(row_choice) not in range(len(result_df)):
-                                    print("[!] Error! Invalid input entered!")
+                                    print(print_red("[!] Error! Invalid input entered!"))
                                 else:
                                     choice_link = result_df.iloc[[row_choice]].link[0]
                                     if "packetstormsecurity" in choice_link:
-                                        print("[+] Downloading in progress")
+                                        print(print_yellow("[+] Downloading in progress"))
                                         pktstorm.download_files(choice_link)
-                                        print("[!] Downloading completed, downloaded files are located in the downloads"
-                                              " folder")
+                                        print(print_green("[!] Downloading completed, downloaded files are located in "
+                                              " the downloads folder"))
                                         sys.exit(0)
                                     elif "github" in choice_link:
-                                        print("[+] Downloading in progress")
+                                        print(print_yellow("[+] Downloading in progress"))
                                         github.download_files(choice_link)
-                                        print("[!] Downloading completed, downloaded files are located in the downloads"
-                                              " folder")
+                                        print(print_green("[!] Downloading completed, downloaded files are located in the downloads"
+                                              " folder"))
                                         sys.exit(0)
                             except:
-                                print("[!] Failed to search online!")
+                                print(print_red("[!] Failed to search online!"))
 
                         # The user does not wish to search online.
                         elif choice.lower() == "n":
                             return None
                         # The user supplies an invalid input.
                         else:
-                            print("[!] Error! Invalid input entered!")
+                            print(print_red("[!] Error! Invalid input entered!"))
 
                     return None
 
@@ -98,7 +99,7 @@ def use_recommended_cve(df):
 
         # The user supplies an invalid input.
         else:
-            print("[!] Error! Invalid input entered!")
+            print(print_red("[!] Error! Invalid input entered!"))
 
 
 def use_local_exploit():
@@ -110,11 +111,11 @@ def use_local_exploit():
     valid = False
     while valid is not True:
         # Prompt the user if they want to use a local exploit.
-        choice = input("\n[+] Do you wish to use a local exploit (y/n): ")
+        choice = input(print_yellow("\n[+] Do you wish to use a local exploit (y/n): "))
 
         # If the user wishes to use a local exploit.
         if choice.lower() == "y":
-            exploit_name = input("\t[+] Enter the exploit name: ")
+            exploit_name = input(print_yellow("\t[+] Enter the exploit name: "))
             parent_dir = os.getcwd()
             exploit_path = os.path.join(parent_dir, "data", "local_exploits")
             avail_exploits = [i for i in os.listdir(exploit_path)]
@@ -128,7 +129,7 @@ def use_local_exploit():
 
             # Display error message if the exploit is not found.
             if not found:
-                print("[!] Error! Exploit not found!")
+                print(print_red("[!] Error! Exploit not found!"))
 
             # Attempt to arm the local exploit that the user provided.
             else:
@@ -146,7 +147,7 @@ def use_local_exploit():
 
         # If the user supplies a invalid input.
         else:
-            print("[!] Error! Invalid input entered!")
+            print(print_red("[!] Error! Invalid input entered!"))
 
 
 def online_mode(api_key, ondemand, search_filter, speed, brute):
@@ -161,7 +162,7 @@ def online_mode(api_key, ondemand, search_filter, speed, brute):
 
     # On-demand scan mode.
     if ondemand is not None:
-        print("[!] Initiating an ondemand scan!")
+        print(print_yellow("[!] Initiating an ondemand scan!"))
         shodan_app.on_demand_scan(ondemand)
 
     # Search mode.
@@ -180,7 +181,7 @@ def offline_mode(speed, target, port_list, cve_list, brute):
     # If there are CVEs returned by Shodan.
     if cve_list:
         df = pd.DataFrame(np.array(cve_list, dtype=object), columns=['name'])
-        print("[!] CVEs obtained from Shodan")
+        print(print_green("[!] CVEs obtained from Shodan"))
         print(df.to_string(justify="left", col_space=10))
 
         # If the user does not want to use a recommended exploit or no recommended exploits are found.
@@ -192,7 +193,7 @@ def offline_mode(speed, target, port_list, cve_list, brute):
         exit()
 
     # Initiate a nmap scan if there are no CVEs returned by Shodan.
-    print("[*] Initiating an offline nmap scan!")
+    print(print_yellow("[*] Initiating an offline nmap scan!"))
     nmap = Nmap()
     if speed is None:
         speed = "quick"
@@ -200,7 +201,7 @@ def offline_mode(speed, target, port_list, cve_list, brute):
 
     # End the process if no hosts are up
     if service_list == {}:
-        print("[!] Error! No hosts are up!")
+        print(print_red("[!] Error! No hosts are up!"))
         return
 
     # Mapping Nmap results with brute force modules
@@ -212,22 +213,22 @@ def offline_mode(speed, target, port_list, cve_list, brute):
         ip = list(service_list.keys())[0]
         for item in service_list[ip]:
             if str(item["port"]) == "21" and item["state"] == "open":
-                print("\n[*] Executing FTP brute force module!")
+                print(print_yellow("\n[*] Executing FTP brute force module!"))
                 ftp_module = True
                 ftp_thread = FTPBrute(target)
                 ftp_thread.start()
             if str(item["port"]) == "22" and item["state"] == "open":
-                print("\n[*] Executing SSH brute force module!")
+                print(print_yellow("\n[*] Executing SSH brute force module!"))
                 ssh_module = True
                 ssh_thread = SSHBrute(target)
                 ssh_thread.start()
             if str(item["port"]) == "23" and item["state"] == "open":
-                print("\n[*] Executing Telnet brute force module!")
+                print(print_yellow("\n[*] Executing Telnet brute force module!"))
                 telnet_module = True
                 telnet_thread = TelnetBrute(target)
                 telnet_thread.start()
             if str(item["port"]) == "80" and item["state"] == "open":
-                print("\n[*] Executing HTTP brute force module!")
+                print(print_yellow("\n[*] Executing HTTP brute force module!"))
                 http_module = True
                 http_url = "http://" + target
                 http_thread = HTTPBrute(http_url)
@@ -252,9 +253,9 @@ def offline_mode(speed, target, port_list, cve_list, brute):
                 # Store and clean the data.
                 try:
                     df = pd.DataFrame(np.array(lst, dtype=object), columns=['name'])
-                    print("\n[*] Potential Vulnerable CVEs")
-                    print("Note: The description is unable to be displayed due to display limitations.")
-                    print(tabulate(df, headers='keys', tablefmt='psql'))
+                    print(print_green("\n[!] Potential Vulnerable CVEs"))
+                    print(print_red("Note: The description is unable to be displayed due to display limitations."))
+                    print(print_green(tabulate(df, headers='keys', tablefmt='psql')))
 
                     # Ask the user if they want to use the recommended exploit.
                     recommended_cve = use_recommended_cve(df)
@@ -271,23 +272,23 @@ def offline_mode(speed, target, port_list, cve_list, brute):
 
     # Display error message if no recommended CVEs are found.
     if not exist:
-        print("[!] No recommended CVEs!")
+        print(print_red("[!] No recommended CVEs!"))
 
     # Wait for the respective brute force threads.
     if brute:
         if ftp_module:
             if ftp_thread.is_alive():
-                print("\n[*] FTP brute force module is still executing!")
+                print(print_yellow("\n[*] FTP brute force module is still executing!"))
             ftp_thread.join()
         if ssh_module:
             if ssh_thread.is_alive():
-                print("\n[*] SSH brute force module is still executing!")
+                print(print_yellow("\n[*] SSH brute force module is still executing!"))
             ssh_thread.join()
         if telnet_module:
             if telnet_thread.is_alive():
-                print("\n[*] TELNET brute force module is still executing!")
+                print(print_yellow("\n[*] TELNET brute force module is still executing!"))
             telnet_thread.join()
         if http_module:
             if http_thread.is_alive():
-                print("\n[*] HTTP brute force module is still executing!")
+                print(print_yellow("\n[*] HTTP brute force module is still executing!"))
             http_thread.join()

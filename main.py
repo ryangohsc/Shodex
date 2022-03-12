@@ -1,24 +1,26 @@
 import argparse
 import cowsay
+import time
 from shodex_engine import *
-import os
 
 
 def splashscreen():
     """"
     Displays the program's splashscreen.
-    :param: None.
-    :return: None.
+    :param: 
+    :return:
     """
     cowsay.tux("Project Shodex! IoT devices scanning simplified!")
     print("Desc: Project Shodex by Team Pizzaluvers")
+    time.sleep(2)
+    os.system("clear")
 
 
 def init_arg_parser():
     """"
     Arg parser for the program.
-    :param: None.
-    :return: None.
+    :param:
+    :return: args.
     """
     parser = argparse.ArgumentParser(description="ICT2206 - Project Shodex", epilog="ICT2206 Assignment 1 Team Pizzaluvers")
     parser.add_argument("--api_key", help="Shodan API key.", required=False)
@@ -35,8 +37,8 @@ def init_arg_parser():
 def main():
     """"
     Program's main function.
-    :param: None.
-    :return: None.
+    :param:
+    :return:
     """
     # Display the splash screen.
     splashscreen()
@@ -54,7 +56,7 @@ def main():
     # Check arguments.
     if ondemand:
         if api_key is None:
-            print("[!] Please enter the shodan API key.")
+            print(print_red("[!] Please enter the shodan API key!"))
             exit()
 
     # Check if folders exists
@@ -87,7 +89,7 @@ def main():
     # Initiate offline mode.
     else:
         offline_mode(speed, target, [], [], brute)
-    print("\n[!] Exiting program!")
+    print(print_yellow("\n[!] Exiting program!"))
     exit() 
 
 

