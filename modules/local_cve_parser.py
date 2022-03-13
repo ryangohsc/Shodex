@@ -5,7 +5,7 @@ import re
 from os import path
 from datetime import date
 from itertools import combinations
-
+from .misc import *
 
 # Global Variables
 CVE_URL = "cve.mitre.org/data/downloads/allitems.csv"
@@ -53,7 +53,7 @@ class LocalCveParser:
         else:
             last_update_file = open(self.last_update_file_path, "r")
             last_update = last_update_file.read()
-            print("[!] Last update was on %s" % last_update)
+            print(print_red("[!] Last update was on %s" % last_update))
             self.download_csv_file()
 
     def download_csv_file(self):
@@ -62,14 +62,14 @@ class LocalCveParser:
         :param: self.
         :return: None. 
         """
-        print("[+] Updating CVE database...")
+        print(print_yellow("[+] Updating CVE database..."))
         output_path = os.path.join(self.data_folder_path, OUTPUT_FILE)
         download_url = "curl -s http://%s --output %s" % (CVE_URL, output_path)
         os.system(download_url)
         last_update_file = open(self.last_update_file_path, "w+")
         last_update_file.write(str(date.today()))
         last_update_file.close()
-        print("[!] CVE database successfully downloaded!")
+        print(print_green("[!] CVE database successfully downloaded!"))
 
     def parse_cev(self):
         """"

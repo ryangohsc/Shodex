@@ -23,7 +23,7 @@ class CloneProgress(git.RemoteProgress):
         """
         Default constructor.
         :param self.
-        :return: None.
+        :return:
         """
         super().__init__()
         self.curr_op = None
@@ -42,7 +42,7 @@ class CloneProgress(git.RemoteProgress):
         :param op_code:
         :param max_count:
         :param cur_count:
-        :return: None.
+        :return:
         """
         if op_code & self.BEGIN:
             self.curr_op = self.get_curr_op(op_code)
@@ -58,7 +58,7 @@ class CloneProgress(git.RemoteProgress):
         """
         Create new progress bar
         :param title:
-        :return: None
+        :return:
         """
         self.alive_bar_instance = alive_bar(manual=True, title=title)
         self.bar = self.alive_bar_instance.__enter__()
@@ -74,9 +74,9 @@ class CloneProgress(git.RemoteProgress):
 # Colour Function Defintions
 def print_green(text):
     """
-
+    Returns the text in the colour green.
     :param text.
-    :return: None.
+    :return: text.
     """
     text = Fore.GREEN + Style.BRIGHT + text + Style.NORMAL + Fore.WHITE
     return text
@@ -84,9 +84,9 @@ def print_green(text):
 
 def print_red(text):
     """
-
+    Returns the text in the colour red.
     :param text.
-    :return: None.
+    :return: text.
     """
     text = Fore.RED + Style.BRIGHT + text + Style.NORMAL + Fore.WHITE
     return text
@@ -94,9 +94,9 @@ def print_red(text):
 
 def print_yellow(text):
     """
-
+    Returns the text in the colour yellow.
     :param text.
-    :return: None.
+    :return: text.
     """
     text = Fore.YELLOW + Style.BRIGHT + text + Style.NORMAL + Fore.WHITE
     return text

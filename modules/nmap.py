@@ -2,8 +2,9 @@ import nmap
 import numpy as np
 import pandas as pd
 import alive_progress
-from tabulate import tabulate
 import time
+from tabulate import tabulate
+from .misc import *
 
 
 class Nmap:
@@ -61,9 +62,9 @@ class Nmap:
                 cve_info[ip] = cve_info_list
                 time.sleep(0.005)
                 bar()
-        print("\n[!] Open Ports")
+        print(print_green("\n[!] Open Ports"))
         df = pd.DataFrame(np.array(lst, dtype=object), columns=['port', 'state', 'name', 'product', 'version', 'extra_info']).astype(str)
-        print(tabulate(df, headers='keys', tablefmt='psql'))
+        print(print_green(tabulate(df, headers='keys', tablefmt='psql')))
         return cve_info
 
     def run(self, ip, speed, port_list):
