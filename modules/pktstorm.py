@@ -15,8 +15,8 @@ class Pkstorm:
     def __init__(self):
         """
         Default constructor. 
-        :param: self.
-        :return: None.
+        :param:
+        :return:
         """                
         self.host = "https://cvepremium.circl.lu/api/cve/"
 
@@ -24,7 +24,8 @@ class Pkstorm:
         """
         Searches for cve in packetstorm using cve.cirl.lu API
         :param cve_list:
-        :return: result['links'] or None
+        :return: result['links']:
+        :return: None:
         """
         for cve in cve_list:
             try:
@@ -34,6 +35,7 @@ class Pkstorm:
                 print(e)
                 return None
 
+            # Insert the references found into a list.
             if http_obj.json():
                 pktstorm_link = []
                 list_of_links = []
@@ -52,8 +54,8 @@ class Pkstorm:
     def download_files(self, link):
         """
         Downloads the chosen file
-        :param link:
-        :return: None
+        :param: link
+        :return:
         """
         r = get(link, headers=HEADERS, timeout=10)
         pattern = "/files/download/(.*)/(.*).txt"
@@ -70,7 +72,7 @@ class Pkstorm:
         """
         Returns a list of links
         :param cve_list:
-        :return: link_list
+        :return link_list:
         """
         link_list = self.search_cve(cve_list)
         return link_list

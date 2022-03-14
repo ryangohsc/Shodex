@@ -1,6 +1,5 @@
 import argparse
 import cowsay
-import time
 from shodex_engine import *
 
 
