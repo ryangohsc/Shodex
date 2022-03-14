@@ -7,6 +7,7 @@ from datetime import date
 from itertools import combinations
 from .misc import *
 
+
 # Global Variables
 CVE_URL = "cve.mitre.org/data/downloads/allitems.csv"
 INDEX_URL = "cve.mitre.org/data/downloads/"
@@ -22,8 +23,8 @@ class LocalCveParser:
     def __init__(self):
         """"
         Default constructor.
-        :param: None.
-        :return: None.
+        :param:
+        :return:
         """
         self.data_folder_path = ""
         self.last_update_file_path = ""
@@ -32,8 +33,8 @@ class LocalCveParser:
     def check_last_update(self):
         """"
         Check if the local .csv list is up-to-date.
-        :param: self.
-        :return: None.
+        :param:
+        :return:
         """
         parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
         self.data_folder_path = os.path.join(parent_dir, "data")
@@ -59,8 +60,8 @@ class LocalCveParser:
     def download_csv_file(self):
         """"
         Downloads the .csv file from the internet.
-        :param: self.
-        :return: None. 
+        :param:
+        :return:
         """
         print(print_yellow("[+] Updating CVE database..."))
         output_path = os.path.join(self.data_folder_path, OUTPUT_FILE)
@@ -74,8 +75,8 @@ class LocalCveParser:
     def parse_cev(self):
         """"
         Parses the .csv file and stores all of its data into a dataframe, specifically the CVE name and description.
-        :param: self.
-        :return: df.
+        :param:
+        :return df:
         """
         parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
         self.data_folder_path = os.path.join(parent_dir, "data")
@@ -103,16 +104,17 @@ class LocalCveParser:
     def search_cve(self, df, search_query):
         """"
         Searches the dataframe which
-        :param:
-        :return:
+        :param df:
+        :param search_query:
+        :return df[df.description.str.contains(search_query)]:
         """
         return df[df.description.str.contains(search_query)]
 
     def run(self, service_list):
         """"
         Runs the local CVE parser.
-        :param: ip, speed.
-        :return: cve_info.
+        :param service_list:
+        :return: cve_list.
         """
         df = self.parse_cev()
         cve_list = []

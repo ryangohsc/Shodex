@@ -10,8 +10,9 @@ from .misc import *
 class ShodanAPI:
     def __init__(self, api_key, filter):
         """"
-        Default constructor. 
-        :param: self, api_key, filter.
+        Default constructor.
+        :param api_key:
+        :param filter:
         :return:
         """        
         self.api = shodan.Shodan(api_key)
@@ -22,18 +23,20 @@ class ShodanAPI:
     def check_api_info(self):
         """"
         Displays success and limitation messages. 
-        :param: self.
+        :param:
         :return:
         """     
         print(print_green("[+] API Key Successfully Loaded!"))
-        print(print_red("[!] Only the first 100 results of the Shodan Crawler will be displayed as this is an Edu Account!\n"))
+        print(print_red("[!] Only the first 100 results of the Shodan Crawler will be displayed "
+                        "as this is an Edu Account!\n"))
         time.sleep(5)
 
     def search_filter(self):
         """"
         Runs a search filter on Shodan's database. 
-        :param: self.
-        :return:
+        :param:
+        :return True:
+        :return False:
         """     
         # Obtain the results from Shodan and store them into a list. 
         print(print_yellow("[*] Retrieving results from Shodan!"))
@@ -93,8 +96,10 @@ class ShodanAPI:
     def retrieve_info(self):
         """"
         Retrieves the info on the target selected by the user.
-        :param: self.
-        :return:
+        :param:
+        :return host['ip_str']:
+        :return cve_list:
+        :return port_list:
         """     
         os.system("clear")
         print(print_yellow("[*] Retrieving info on the selected target!"))

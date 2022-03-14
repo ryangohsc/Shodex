@@ -15,17 +15,16 @@ class Github:
     def __init__(self):
         """
         Default constructor. 
-        :param: self.
-        :return: None.
+        :param:
+        :return:
         """        
         self.host = "https://api.github.com/search/repositories?q="  
-
 
     def search_cve(self, cve_list):
         """
         Searches the list of CVEs using the GitHub API
         :param cve_list:
-        :return: list_of_links
+        :return list_of_links:
         """
         for cve in cve_list:
             try:
@@ -46,12 +45,11 @@ class Github:
                         bar()
                 return list_of_links
 
-
     def download_files(self, arg_link):
         """
         Downloads the chosen link
         :param arg_link:
-        :return: None
+        :return: 
         """
         folder_name = arg_link.rsplit("/", 1)[-1]
         path = "%s/downloads/%s" % (CURRENT_PATH, folder_name)
@@ -62,11 +60,10 @@ class Github:
         else:
             print("[!] The folder already exists!")
 
-
     def run(self, cve_list):
         """
         :param cve_list:
-        :return: link_list
+        :return link_list:
         """
         link_list = self.search_cve(cve_list)
         return link_list

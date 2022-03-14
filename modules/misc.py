@@ -15,6 +15,7 @@ class CloneProgress(git.RemoteProgress):
         "RESOLVING",
         "WRITING",
     ]
+
     OP_CODE_MAP = {
         getattr(git.RemoteProgress, _op_code): _op_code for _op_code in OP_CODES
     }
@@ -22,7 +23,7 @@ class CloneProgress(git.RemoteProgress):
     def __init__(self):
         """
         Default constructor.
-        :param self.
+        :param:
         :return:
         """
         super().__init__()
@@ -31,7 +32,12 @@ class CloneProgress(git.RemoteProgress):
 
     @classmethod
     def get_curr_op(cls, op_code: int) -> str:
-        """Get OP name from OP code."""
+        """
+        Gets the OP name from OP code.
+        :param cls:
+        :param op_code:
+        :return cls.OP_CODE_MAP.get(op_code_masked, "?").title():
+        """
         op_code_masked = op_code & cls.OP_MASK
         return cls.OP_CODE_MAP.get(op_code_masked, "?").title()
 
@@ -75,8 +81,8 @@ class CloneProgress(git.RemoteProgress):
 def print_green(text):
     """
     Returns the text in the colour green.
-    :param text.
-    :return: text.
+    :param text:
+    :return text:
     """
     text = Fore.GREEN + Style.BRIGHT + text + Style.NORMAL + Fore.WHITE
     return text
@@ -85,8 +91,8 @@ def print_green(text):
 def print_red(text):
     """
     Returns the text in the colour red.
-    :param text.
-    :return: text.
+    :param text:
+    :return: text:
     """
     text = Fore.RED + Style.BRIGHT + text + Style.NORMAL + Fore.WHITE
     return text
@@ -95,8 +101,8 @@ def print_red(text):
 def print_yellow(text):
     """
     Returns the text in the colour yellow.
-    :param text.
-    :return: text.
+    :param text:
+    :return: text:
     """
     text = Fore.YELLOW + Style.BRIGHT + text + Style.NORMAL + Fore.WHITE
     return text

