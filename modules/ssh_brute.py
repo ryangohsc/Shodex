@@ -48,7 +48,7 @@ class SSHBrute(threading.Thread):
             return self.ssh_brute(hostname, username, password)
         else:
             # Connection has been established
-            print(print_green(f"[!] \n[SSH] Found combo:\n\tHostname: {hostname}\n\tUsername: {username}\n\tPassword: {password}"))
+            print(print_green(f"\n[SSH] Found combo:\n\tHostname: {hostname}\n\tUsername: {username}\n\tPassword: {password}"))
             return True
 
     def run(self):
