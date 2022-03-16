@@ -37,7 +37,7 @@ class FTPBrute(threading.Thread):
             pass
         else:
             # Connection has been established
-            print(print_green(f"\n[!] [FTP] Found credentials:\n\tHostname: {hostname}\n\tUsername: "
+            print(print_green(f"\n[FTP] Found credentials:\n\tHostname: {hostname}\n\tUsername: "
                               f"{username}\n\tPassword: {password}"))
             return True
 
