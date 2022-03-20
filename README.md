@@ -30,7 +30,7 @@ Exploits recommended, or any local exploits provided by the user to Shodex can b
 
 **Step 5:** Afterwards, upon selecting an exploit, Shodex will autoconfigure and execute the payload onto the target device if deemed possible.
 
-## Usage  
+# Usage  
 ### Updating the Tool (Requires Internet Connection)
 ```
 python3 main.py --update
