@@ -40,8 +40,8 @@ def use_recommended_cve(df):
 
                     # Arm the exploit.
                     exploit_loader = ExploitLoader(exploit_path, exploit_ext)
-                    exploit_loader.run()
-                    return True
+                    outcome = exploit_loader.run()
+                    return outcome
 
                 # If a recommended exploit is not found in exploit-db.
                 else:
@@ -139,7 +139,8 @@ def use_local_exploit():
 
                 # Arm the exploit. 
                 exploit_loader = ExploitLoader(name, extension)
-                exploit_loader.run()
+                outcome = exploit_loader.run()
+                return outcome
 
         # If the user do not wish to use a local exploit.
         elif choice.lower() == "n":
@@ -234,7 +235,7 @@ def offline_mode(speed, target, port_list, cve_list, brute):
                 http_thread = HTTPBrute(http_url)
                 http_thread.start()
 
-    # Check if there are any services and CVEs found for each IP
+    # Check if there are any services and CVEs found for each IP.
     exist = False
     ips = service_list.keys()
     cve_parser = LocalCveParser()
