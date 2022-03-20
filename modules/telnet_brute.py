@@ -7,7 +7,7 @@ from .misc import *
 
 class TelnetBrute(threading.Thread):
     def __init__(self, target):
-        """"
+        """
         Default constrictor.
         :param target:
         :return:
@@ -16,7 +16,7 @@ class TelnetBrute(threading.Thread):
         self.target = target
 
     def telnet_brute(self, hostname, username, password):
-        """"
+        """
         Runs the brute force function on the Telnet service.
         :param hostname:
         :param username:
@@ -65,7 +65,7 @@ class TelnetBrute(threading.Thread):
             return False
 
     def run(self):
-        """"
+        """
         Reads the wordlist and runs the brute force function on the Telnet service.
         :param:
         :return:

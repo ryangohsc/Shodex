@@ -9,7 +9,7 @@ from .misc import *
 
 class Nmap:
     def __init__(self):
-        """"
+        """
         Default constructor. 
         :param:
         :return:
@@ -17,8 +17,9 @@ class Nmap:
         self.results = {}
 
     def scan_target(self, ip, speed, port_list):
-        """"
+        """
         Scans a particular target.
+        :param port_list:
         :param ip:
         :param speed:
         :return cve_info.cve_List:
@@ -72,7 +73,7 @@ class Nmap:
         return cve_info
 
     def run(self, ip, speed, port_list):
-        """"
+        """
         Runs the nmap scan.
         :param ip:
         :param speed:

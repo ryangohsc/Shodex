@@ -9,7 +9,7 @@ from .misc import *
 
 class ShodanAPI:
     def __init__(self, api_key, filter):
-        """"
+        """
         Default constructor.
         :param api_key:
         :param filter:
@@ -21,7 +21,7 @@ class ShodanAPI:
         self.target = pd.DataFrame()
 
     def check_api_info(self):
-        """"
+        """
         Displays success and limitation messages. 
         :param:
         :return:
@@ -32,7 +32,7 @@ class ShodanAPI:
         time.sleep(5)
 
     def search_filter(self):
-        """"
+        """
         Runs a search filter on Shodan's database. 
         :param:
         :return True:
@@ -94,7 +94,7 @@ class ShodanAPI:
             return False
 
     def retrieve_info(self):
-        """"
+        """
         Retrieves the info on the target selected by the user.
         :param:
         :return host['ip_str']:
@@ -133,7 +133,7 @@ class ShodanAPI:
         return host['ip_str'], cve_list, port_list
 
     def on_demand_scan(self, target):
-        """"
+        """
         Performs a on-demand scan on the target. 
         :param: self, target.
         :return:

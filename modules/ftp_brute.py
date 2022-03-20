@@ -16,7 +16,7 @@ class FTPBrute(threading.Thread):
         self.port = 21
 
     def ftp_brute(self, hostname, username, password):
-        """"
+        """
         Runs the HTTP brute force function on the HTTP service.
         :param hostname:
         :param username:
@@ -36,13 +36,13 @@ class FTPBrute(threading.Thread):
             # Incorrect credentials
             pass
         else:
-            # Connection has been established.
-            print(print_green(f"\n[!] [FTP] Found credentials:\n\tHostname: {hostname}\n\tUsername: "
+            # Connection has been established
+            print(print_green(f"\n[FTP] Found credentials:\n\tHostname: {hostname}\n\tUsername: "
                               f"{username}\n\tPassword: {password}"))
             return True
 
     def run(self):
-        """"
+        """
         Reads the wordlist and runs the brute force function on the ftp service.
         :param: self.
         :return:

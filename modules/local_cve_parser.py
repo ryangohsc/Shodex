@@ -21,7 +21,7 @@ VALUE = 1
 
 class LocalCveParser:
     def __init__(self):
-        """"
+        """
         Default constructor.
         :param:
         :return:
@@ -31,7 +31,7 @@ class LocalCveParser:
         self.cve_database_path = ""
 
     def check_last_update(self):
-        """"
+        """
         Check if the local .csv list is up-to-date.
         :param:
         :return:
@@ -58,7 +58,7 @@ class LocalCveParser:
             self.download_csv_file()
 
     def download_csv_file(self):
-        """"
+        """
         Downloads the .csv file from the internet.
         :param:
         :return:
@@ -73,7 +73,7 @@ class LocalCveParser:
         print(print_green("[!] CVE database successfully downloaded!"))
 
     def parse_cev(self):
-        """"
+        """
         Parses the .csv file and stores all of its data into a dataframe, specifically the CVE name and description.
         :param:
         :return df:
@@ -102,7 +102,7 @@ class LocalCveParser:
         return df
 
     def search_cve(self, df, search_query):
-        """"
+        """
         Searches the dataframe if it contains specific keywords.
         :param df:
         :param search_query:
@@ -111,7 +111,7 @@ class LocalCveParser:
         return df[df.description.str.contains(search_query)]
 
     def run(self, service_list):
-        """"
+        """
         Runs the local CVE parser.
         :param service_list:
         :return: cve_list.
