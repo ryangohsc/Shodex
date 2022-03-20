@@ -22,7 +22,7 @@ class Github:
 
     def search_cve(self, cve_list):
         """
-        Searches the list of CVEs using the GitHub API
+        Searches the list of CVEs using the GitHub API.
         :param cve_list:
         :return list_of_links:
         """
@@ -47,7 +47,7 @@ class Github:
 
     def download_files(self, arg_link):
         """
-        Downloads the chosen link
+        Downloads the chosen link.
         :param arg_link:
         :return: 
         """
