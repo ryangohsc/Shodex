@@ -31,8 +31,6 @@ class Nmap:
         if not port_list:
             if speed == "fast":
                 port_list = [i for i in range(0, 1024)]
-            elif speed == "fuck":
-                port_list = [21, 80]
             else:
                 port_list = [i for i in range(0, 65535)]
 
