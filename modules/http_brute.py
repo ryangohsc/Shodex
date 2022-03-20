@@ -7,7 +7,7 @@ from .misc import *
 
 class HTTPBrute(threading.Thread):
     def __init__(self, target):
-        """"
+        """
         Default constrictor.
         :param target:
         :return:
@@ -16,7 +16,7 @@ class HTTPBrute(threading.Thread):
         self.target = target
 
     def http_brute(self, hostname, username, password):
-        """"
+        """
         Runs the HTTP brute force function on the HTTP service.
         :param hostname:
         :param username:
@@ -32,7 +32,7 @@ class HTTPBrute(threading.Thread):
             pass
 
     def run(self):
-        """"
+        """
          Reads the wordlist and runs the brute force function on the HTTP service.
         :param:
         :return:
