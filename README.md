@@ -4,7 +4,7 @@ The growth of the Internet of Things (IoT) devices has continued to grow gradual
 # Project Shodex  
 Shodex is a tool is developed for Linux. It aims to streamline the IoT penetration testing methodology into a minimal user interaction command-line tool. It leverages the Shodan API to search for vulnerable IoT devices based on the user's filters.  
 
-![image](https://user-images.githubusercontent.com/32363441/159154701-612b24ce-f563-43ef-9f4a-29a638c1a5e5.png)
+![image](https://user-images.githubusercontent.com/32363441/159154712-12502479-1e7f-4e9b-98b9-d36bd6897480.png)
 
 # Features 
 **1) Scan for Vulnerabilities**
