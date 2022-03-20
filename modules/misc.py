@@ -62,7 +62,7 @@ class CloneProgress(git.RemoteProgress):
 
     def _dispatch_bar(self, title):
         """
-        Create new progress bar
+        Create new progress bar.
         :param title:
         :return:
         """
@@ -71,13 +71,13 @@ class CloneProgress(git.RemoteProgress):
 
     def _destroy_bar(self):
         """
-        Destroy progress bar
+        Destroy progress bar.
         :return:
         """
         self.alive_bar_instance.__exit__(None, None, None)
 
 
-# Colour Function Defintions
+# Colour function definitions.
 def print_green(text):
     """
     Returns the text in the colour green.

@@ -103,7 +103,7 @@ class LocalCveParser:
 
     def search_cve(self, df, search_query):
         """"
-        Searches the dataframe which
+        Searches the dataframe if it contains specific keywords.
         :param df:
         :param search_query:
         :return df[df.description.str.contains(search_query)]:

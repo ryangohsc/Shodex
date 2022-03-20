@@ -74,11 +74,11 @@ class ShodanAPI:
             os.system("clear")
             print(print_yellow(tabulate(df, headers='keys', tablefmt='psql')))
 
-            # Get the user to select a target
+            # Get the user to select a target.
             df_len = len(df)
             valid = False 
             while valid is not True:
-                # Prompt the user for a target
+                # Prompt the user for a target.
                 target = int(input(print_yellow("\n[+] Select a target (e.g. 5): ")))
 
                 # Check that the input entered is valid. 
@@ -105,7 +105,7 @@ class ShodanAPI:
         print(print_yellow("[*] Retrieving info on the selected target!"))
         cve_list = []
 
-        # Store data into variables
+        # Store data into variables.
         target = self.target['ip']
         try:
             host = self.api.host(target)
@@ -118,7 +118,7 @@ class ShodanAPI:
         except KeyError:
             pass
 
-        # Print the information
+        # Print the information.
         print(print_yellow("\n\tTarget Information"))
         print(print_yellow("\tLast update: %s" % host['last_update']))
         print(print_yellow("\tIP: %s" % host['ip_str']))

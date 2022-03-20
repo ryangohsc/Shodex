@@ -22,7 +22,7 @@ class Pkstorm:
 
     def search_cve(self, cve_list):
         """
-        Searches for cve in packetstorm using cve.cirl.lu API
+        Searches for cve in packetstorm using cve.cirl.lu API.
         :param cve_list:
         :return: result['links']:
         :return: None:
@@ -53,7 +53,7 @@ class Pkstorm:
 
     def download_files(self, link):
         """
-        Downloads the chosen file
+        Downloads the chosen file.
         :param: link
         :return:
         """
@@ -70,7 +70,7 @@ class Pkstorm:
 
     def run(self, cve_list):
         """
-        Returns a list of links
+        Returns a list of links.
         :param cve_list:
         :return link_list:
         """
