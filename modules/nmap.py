@@ -19,6 +19,7 @@ class Nmap:
     def scan_target(self, ip, speed, port_list):
         """
         Scans a particular target.
+        :param port_list:
         :param ip:
         :param speed:
         :return cve_info.cve_List:
