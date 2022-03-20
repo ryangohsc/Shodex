@@ -1,7 +1,7 @@
 # Background 
 The growth of the Internet of Things (IoT) devices has continued to grow gradually throughout the years. By 2025, there will be about an estimated 75 billion IoT devices globally. Given the design nature and computing constraints of IoT devices, they are vulnerable to cyber security threats. Although IoT security is starting to gain attention, there is still a lack of comprehensive commercial tools to perform the scanning and penetration testing of IoT devices, leading to many developing their own frameworks and tools.
 
-# Shodex  
+# Project Shodex  
 Shodex is a tool is developed for Linux. It aims to streamline the IoT penetration testing methodology into a minimal user interaction command-line tool. It leverages the Shodan API to search for vulnerable IoT devices based on the user's filters.  
 
 ![image](https://user-images.githubusercontent.com/32363441/159154404-d5dc441f-69d8-460b-9512-70338ef9f664.png)
@@ -30,12 +30,6 @@ Exploits recommended, or any local exploits provided by the user to Shodex can b
 
 **Step 5:** Afterwards, upon selecting an exploit, Shodex will autoconfigure and execute the payload onto the target device if deemed possible.
 
-# Team Members
-###### Lab Group P1 - Team Pizzaluvers
-- **Team Leader**: Ryan Goh (1802980)
-- **Team Member**: Alicia Fang Yan Jie (2002559)
-- **Team Member**: Koh Jun Jie (2000819)  
-
 ## Usage  
 ### Updating the Tool (Requires Internet Connection)
 ```
@@ -57,3 +51,9 @@ python3 main.py --target [IP Address] --speed [Optional: Fast]
 ```
 python3 main.py --target [IP Address] --speed [Optional: Fast] --brute
 ```
+
+# Team Members
+###### Lab Group P1 - Team Pizzaluvers
+- **Team Leader**: Ryan Goh (1802980)
+- **Team Member**: Alicia Fang Yan Jie (2002559)
+- **Team Member**: Koh Jun Jie (2000819)  
