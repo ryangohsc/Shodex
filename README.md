@@ -44,11 +44,11 @@ For a list of all the filters, visit Shodan's webpage.
 ```
 python3 main.py --filter ip:[IP Address],city:[CITY],country:[COUNTRY] --api_key [Shodan API Key] --brute
 ```
-### Local Scanning
+### Offline Scanning
 ```
 python3 main.py --target [IP Address] --speed [Optional: Fast]
 ```
-### Local Scanning with Bruteforce Mode
+### Offline Scanning with Bruteforce Mode
 ```
 python3 main.py --target [IP Address] --speed [Optional: Fast] --brute
 ```
