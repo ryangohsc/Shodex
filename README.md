@@ -29,6 +29,19 @@ Exploits recommended, or any local exploits provided by the user to Shodex can b
 **Step 4:** The user will have the option to use the suggested publicly available exploits or use the inbuilt exploits if it exists.
 
 **Step 5:** Afterwards, upon selecting an exploit, Shodex will autoconfigure and execute the payload onto the target device if deemed possible.
+  
+# First Run Setup  
+**Dependencies:**  
+- git
+- nmap
+- ssh
+- python3
+  
+**Installing Python Dependency & Updating:**
+```
+pip3 install requirements.txt
+python3 main.py --update
+```
 
 # Usage  
 ### Updating the Tool (Requires Internet Connection)
