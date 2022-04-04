@@ -39,7 +39,7 @@ Exploits recommended, or any local exploits provided by the user to Shodex can b
   
 **Installing Python Dependency & Updating:**
 ```
-pip3 install requirements.txt
+pip3 install -r requirements.txt
 python3 main.py --update
 ```
 
