@@ -52,7 +52,8 @@ python3 main.py --update
 ```
 python3 main.py --filter ip:[IP Address],city:[CITY],country:[COUNTRY] --api_key [Shodan API Key]
 ```
-For a list of all the filters, visit Shodan's webpage.
+For a list of all the filters, visit Shodan's webpage:  
+https://www.shodan.io/search/filters
 ### Online Scanning with Bruteforce Mode
 ```
 python3 main.py --filter ip:[IP Address],city:[CITY],country:[COUNTRY] --api_key [Shodan API Key] --brute
